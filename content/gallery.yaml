@@ -1,0 +1,95 @@
+# Gallery works, shown in this order.
+#   image:        path under static/ (e.g. /images/art/my-painting.jpg)
+#   thumb:        optional smaller file for the grid
+#   wiki:         Archive entries this work depicts — they list the work under "Appearances"
+#   description:  Markdown; [[links]] work here too
+#   draft: true   hides a work
+
+- id: "001"
+  title: Hearth
+  image: /images/art/sigil.svg
+  medium: Digital study
+  date: 2026-09-20
+  tags: [Insignia, Studies]
+  wiki: [Insignia]
+  description: A reconstructed [[insignia]] on the seven-by-seven grid. The red centre is the *hearth*, the one point that never fades.
+
+- id: "002"
+  title: The Seventh Stair
+  image: /images/art/hero.svg
+  medium: Digital painting
+  date: 2026-09-02
+  tags: [Halden, Night]
+  wiki: [Halden, Pylon]
+  description: The hill above the old harbour of [[Halden]], and the seventh lamp on its spur of rock.
+
+- id: "003"
+  title: Survey of Halden
+  image: /images/art/halden-map.svg
+  medium: Map, ink and dots
+  date: 2026-09-08
+  tags: [Halden, Maps]
+  wiki: [Halden]
+  description: A guild survey of the bay. The seven [[pylon]]s are marked; the seventh is circled in red.
+
+- id: "004"
+  title: 리디아 그리피스
+  image: /images/art/lydia.png
+  medium: Halftone portrait
+  date: 2026-09-24
+  tags: [Characters]
+  wiki: [Ines Varo]
+  description: A portrait of [[Ines Varo]]. The red point at her temple is one of the four she can still recall.
+
+- id: "005"
+  title: 브리아나 레인
+  image: /images/art/briana.png
+  medium: Halftone portrait
+  date: 2026-09-12
+  tags: [Characters]
+  wiki: [The Dimming]
+  description: A field of points thinning to nothing — a guild print made in the first century after [[the Dimming]].
+
+- id: "006"
+  title: The Ringed Lamp
+  image: /images/art/lantern.svg
+  medium: Emblem
+  date: 2026-09-15
+  tags: [Insignia, Night]
+  wiki: [Lantern Guild]
+  description: The emblem of the [[Lantern Guild]], stamped on every ledger they keep.
+
+- id: "007"
+  title: Seven in a Line
+  image: /images/art/seven.svg
+  medium: Notebook page
+  date: 2026-09-24
+  tags: [Insignia, Studies]
+  wiki: [Ines Varo, Insignia]
+  description: A page from Ines Varo's notebook, drawn the night the seventh lamp lit.
+
+- id: "008"
+  title: Elevation of a Lamp
+  image: /images/art/pylon.svg
+  medium: Technical drawing
+  date: 2026-09-18
+  tags: [Studies]
+  wiki: [Pylon]
+  description: A guild elevation of a [[pylon]], drawn from the one at the top of the seventh stair.
+
+- id: "009"
+  title: Pylon Field
+  image: /images/art/grid-study.svg
+  medium: Digital study
+  date: 2026-09-05
+  tags: [Night, Studies]
+  wiki: [Pylon]
+  description: Perspective study of a field of lamps at night.
+
+- id: "010"
+  title: The Quiet Signal (cover)
+  image: /images/art/cover.svg
+  medium: Book cover
+  date: 2026-09-01
+  tags: [Night]
+  description: Cover art for *[The Quiet Signal](/novel/the-quiet-signal/)*, Book One.

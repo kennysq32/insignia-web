@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+{% block main %}
+{% set first = featured_book.chapters[0] if featured_book and featured_book.chapters else none %}
+<section class="hero">
+  {% if site.home.hero_image %}
+  <img class="hero-art" src="{{ site.home.hero_image }}" alt="" fetchpriority="high">
+  <div class="hero-shade" aria-hidden="true"></div>
+  {% endif %}
+  <div class="hero-inner">
+    <p class="label hero-kicker">{{ site.home.kicker or "( a world in many media )" }}</p>
+    <h1 class="hero-title">{{ site.title }}</h1>
+    {% if site.tagline %}<p class="hero-tagline">{{ site.tagline }}</p>{% endif %}
+  </div>
+  {% if first %}
+  <a class="hero-card frost" href="{{ first.url }}">
+    <span class="card-copy">
+      <span class="dot-label">{{ featured_book.title|lower }} ( {{ first.number }} )</span>
+      <span class="headline">{{ first.label }}: {{ first.title }}</span>
+      {% if first.subtitle %}<span class="card-sub">{{ first.subtitle }}</span>{% endif %}
+    </span>
+    <span class="btn btn--block">Start reading</span>
+  </a>
+  {% endif %}
+</section>
+
+{% if tiles %}
+<section class="section container">
+  <header class="section-head">
+    <p class="label">( 01 — {{ tiles|length|pad }} )</p>
+    <h2 class="section-title">{{ site.home.tiles_title or "Enter the world" }}</h2>
+  </header>
+  <div class="tiles">
+    {% for t in tiles %}
+    <a class="tile" href="{{ t.url }}">
+      {% if t.image %}<img class="tile-art" src="{{ t.image }}" alt="" loading="lazy">{% endif %}
+      <span class="tile-card frost">
+        <span class="card-copy">
+          <span class="dot-label">{{ t.name|lower }} ( {{ t.count }} )</span>
+          <span class="headline">{{ t.headline }}</span>
+        </span>
+        <span class="btn btn--block">{{ t.cta or "Open" }}</span>
+      </span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="section container">
+  <div class="split">
+    <div class="panel">
+      <header class="panel-head">
+        <p class="label">( latest )</p>
+        <h2 class="section-title">Transmissions</h2>
+      </header>
+      <ol class="feed">
+        {% for item in feed %}
+        <li>
+          <a href="{{ item.url }}">
+            <span class="label feed-date">{{ item.date|date("dots") }}</span>
+            <span class="feed-title">{{ item.title }}{% if item.sub %}<span class="feed-sub">{{ item.sub }}</span>{% endif %}</span>
+            <span class="label feed-kind">{{ item.kind }}</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ol>
+    </div>
+    {% if entry %}
+    <a class="panel entry-card" href="{{ entry.url }}">
+      {% if entry.image %}<span class="entry-art"><img src="{{ entry.image }}" alt="" loading="lazy"></span>{% endif %}
+      <span class="label">( from {{ site.archive.name|lower }} )</span>
+      <span class="headline headline--lg">{{ entry.title }}</span>
+      <span class="entry-summary">{{ entry.summary }}</span>
+      <span class="btn">Read the entry</span>
+    </a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

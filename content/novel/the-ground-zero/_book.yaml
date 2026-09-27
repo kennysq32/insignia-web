@@ -1,0 +1,9 @@
+# One folder per book. Chapters are the .md files in this folder, in file-name order.
+title: The Ground Zero
+subtitle: Book One
+author: The Insignia Project
+cover: /images/art/cover.svg
+status: Ongoing
+order: 1
+synopsis: |
+  누군가는 복수를 다짐했고, 누군가는 가능성을 발견했으며, 누군가는 새 시대를 열었다.

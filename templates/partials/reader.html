@@ -1,0 +1,34 @@
+{#- Shared Medium-style article: used by chapters and standalone pages. -#}
+{% from "partials/icons.html" import icon %}
+{% macro reader(doc, kicker="", author="", contents_url="") %}
+<article class="reader" data-reading>
+  <header class="reader-head">
+    {% if kicker %}<p class="reader-kicker label">{{ kicker }}</p>{% endif %}
+    <h1 class="reader-title">{{ doc.title }}</h1>
+    {% if doc.subtitle %}<p class="reader-subtitle">{{ doc.subtitle }}</p>{% endif %}
+    <div class="byline">
+      <span class="avatar" aria-hidden="true"><span></span></span>
+      <span class="byline-text">
+        <span class="byline-name">{{ author or site.author or site.title }}</span>
+        <span class="byline-meta">{{ doc.minutes }} min read{% if doc.date %} · <time datetime="{{ doc.date|date('iso') }}">{{ doc.date|date("medium") }}</time>{% endif %}</span>
+      </span>
+    </div>
+    <div class="actionbar">
+      <span class="label actionbar-left">{{ caller() if caller else "" }}</span>
+      <span class="actionbar-right">
+        {% if contents_url %}<a class="icon-btn" href="{{ contents_url }}" aria-label="Table of contents" title="Contents">{{ icon("list") }}</a>{% endif %}
+        <button class="icon-btn" type="button" data-copy-link aria-label="Copy link" title="Copy link">{{ icon("link") }}</button>
+      </span>
+    </div>
+  </header>
+  <div class="prose{% if doc.meta.dropcap %} dropcap{% endif %}">
+    {{ doc.html|safe }}
+  </div>
+  {% if doc.notes %}
+  <section class="reader-notes" aria-label="Notes">
+    <h2 class="label">( notes )</h2>
+    {{ doc.notes|safe }}
+  </section>
+  {% endif %}
+</article>
+{% endmacro %}

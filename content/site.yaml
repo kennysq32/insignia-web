@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  Site settings — available in every template as `site`.
+# ─────────────────────────────────────────────────────────────────────────────
+
+title: INSIGNIA
+tagline: Choices Define Time Itself.
+description: >-
+  Insignia is a world-building art project — a serialized novel, images, films
+  and a curated archive describing one world from many sides.
+author: The Insignia Project
+language: en            # "ko" if the site is mainly in Korean
+
+# If the site lives under a sub-folder (e.g. https://you.github.io/insignia-web/)
+# put that folder here, like "/insignia-web". Leave it empty for your own domain.
+base_url: ""
+# Full public address. Only used for link previews on social media.
+site_url: ""
+
+nav:
+  - { label: Novel,   url: /novel/,   section: novel }
+  - { label: Gallery, url: /gallery/, section: gallery }
+  - { label: Films,   url: /films/,   section: films }
+  - { label: Archive, url: /wiki/,    section: wiki }
+  - { label: About,   url: /about/,   section: about }
+
+# ── Home page ────────────────────────────────────────────────────────────────
+home:
+  hero_image: ""                      # empty = plain black. Example: /images/art/hero.svg
+  kicker: ( mirage concept group presents )
+  featured_book: the-quiet-signal     # folder name in content/novel/
+  featured_entry: Insignia            # an Archive entry title
+  tiles_title: Enter the world
+  tiles:
+    - section: novel
+      name: novel
+      headline: A serialized novel, one chapter at a time.
+      cta: Read
+      image: /images/art/cover.svg
+    - section: gallery
+      name: gallery
+      headline: Paintings, studies and artifacts from the world.
+      cta: View works
+      image: /images/art/sigil.svg
+    - section: films
+      name: films
+      headline: Moving pictures and recovered broadcasts.
+      cta: Watch
+      image: /images/art/grid-study.svg
+    - section: wiki
+      name: archive
+      headline: The curated record — places, people, events.
+      cta: Explore
+      image: /images/art/halden-map.svg
+
+# Intro lines on the section pages (optional)
+novel_intro: Serialized fiction from the world. Read it in order, or follow the dotted links into the Archive as you go.
+gallery_intro: Paintings, studies and artifacts, Select a work to see it large.
+films_intro: Moving pictures from the world. Videos load from YouTube only when you press play.
+
+# ── The Archive (wiki) ───────────────────────────────────────────────────────
+archive:
+  name: The Archive
+  tagline: the curated record of the world of Insignia
+  featured: Insignia
+  did_you_know:
+    - "… that the [[Lantern Guild]] still climbs every dark [[pylon]] once a year, in case one answers?"
+    - "… that the city of [[Halden]] was named for the seventh light on its hill?"
+    - "… that nobody alive can read an [[insignia]] that was broadcast after [[the Dimming]] — because none were?"
+    - "… that [[Ines Varo]] keeps her field notes in pencil, since ink was once considered a lesser record?"
+
+# ── Footer ───────────────────────────────────────────────────────────────────
+footer:
+  note: © 2026 The Insignia Project. All rights reserved.
+  # links:
+  #   - { label: YouTube,   url: "https://www.youtube.com/@yourchannel" }
+  #   - { label: Instagram, url: "https://www.instagram.com/yourname" }

@@ -1,0 +1,9 @@
+dist/
+.dist-tmp*/
+.dist-old-*/
+.build.lock
+__pycache__/
+.DS_Store
+tools/
+.claude/settings.local.json
+.obsidian/

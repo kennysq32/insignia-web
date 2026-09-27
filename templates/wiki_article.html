@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block main %}
+{% include "partials/wiki_top.html" %}
+{% set has_appearances = doc.appearances or doc.backlinks %}
+<div class="wiki-layout">
+  <details class="wiki-toc" open data-toc>
+    <summary><span>Contents</span></summary>
+    <nav aria-label="Contents">
+      <ul>
+        <li><a href="#top">(Top)</a></li>
+        {% for t in doc.toc recursive %}
+        <li><a href="#{{ t.id }}">{{ t.name|safe }}</a>{% if t.children %}<ul>{{ loop(t.children) }}</ul>{% endif %}</li>
+        {% endfor %}
+        {% if doc.notes %}<li><a href="#references">References</a></li>{% endif %}
+        {% if has_appearances %}<li><a href="#appearances">Appearances</a></li>{% endif %}
+      </ul>
+    </nav>
+  </details>
+
+  <article class="wiki-main">
+    <header class="wiki-head">
+      <h1 class="wiki-h1" id="top">{{ doc.title }}</h1>
+      <div class="wiki-tabs">
+        <div class="wiki-tabs-group">
+          <a class="is-selected" href="{{ doc.url }}" aria-current="page">Entry</a>
+          {% if has_appearances %}<a href="#appearances">Appearances <span class="wiki-count">{{ doc.appearances|length + doc.backlinks|length }}</span></a>{% endif %}
+        </div>
+        <div class="wiki-tabs-group">
+          <span class="is-selected">Read</span>
+          <a href="/wiki/all/">Index</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="wiki-body">
+      <p class="wiki-tagline">From {{ site.archive.name }}, {{ site.archive.tagline or "the curated record" }}</p>
+      {% if doc.description %}<p class="wiki-shortdesc">{{ doc.description }}</p>{% endif %}
+      {% for h in doc.hatnotes %}<div class="hatnote" role="note">{{ h|safe }}</div>{% endfor %}
+
+      {% if doc.infobox %}
+      {% set ib = doc.infobox %}
+      <table class="infobox"{% if ib.color %} style="--ib: {{ ib.color }}"{% endif %}>
+        <caption class="infobox-title">{{ ib.title }}{% if ib.subtitle %}<span class="infobox-subtitle">{{ ib.subtitle }}</span>{% endif %}</caption>
+        <tbody>
+          {% if ib.image %}
+          <tr><td colspan="2" class="infobox-image">
+            <img src="{{ ib.image }}" alt="{{ ib.caption|striptags or ib.title }}">
+            {% if ib.caption %}<div class="infobox-caption">{{ ib.caption|safe }}</div>{% endif %}
+          </td></tr>
+          {% endif %}
+          {% for row in ib.rows %}
+            {% if row.header %}<tr><th colspan="2" class="infobox-header">{{ row.header|safe }}</th></tr>
+            {% elif row.full %}<tr><td colspan="2" class="infobox-full">{{ row.full|safe }}</td></tr>
+            {% else %}<tr><th scope="row" class="infobox-label">{{ row.label|safe }}</th><td class="infobox-data">{{ row.value|safe }}</td></tr>
+            {% endif %}
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+
+      {{ doc.html|safe }}
+
+      {% if doc.notes %}
+      <h2 id="references">References</h2>
+      <div class="reflist">{{ doc.notes|safe }}</div>
+      {% endif %}
+
+      {% if has_appearances %}
+      <h2 id="appearances">Appearances</h2>
+      {% if doc.appearances %}
+      <p>This entry appears in the following works:</p>
+      <ul class="appearances">
+        {% for ap in doc.appearances %}
+        <li><span class="ap-kind">{{ ap.kind }}</span> <a href="{{ ap.url }}">{{ ap.title }}</a>{% if ap.context %} <span class="ap-context">— {{ ap.context }}</span>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% if doc.backlinks %}
+      <p class="wiki-linkshere"><b>Linked from:</b>
+        {% for b in doc.backlinks %}<a href="{{ b.url }}">{{ b.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+      </p>
+      {% endif %}
+      {% endif %}
+
+      {% for nb in doc.navboxes %}
+      <table class="navbox" role="navigation">
+        <tr><th colspan="2" class="navbox-title">{{ nb.title|safe }}</th></tr>
+        {% for g in nb.groups %}
+        <tr>
+          <th scope="row" class="navbox-group">{{ g.label|safe }}</th>
+          <td class="navbox-list"><ul class="hlist">{% for item in g["items"] %}<li>{{ item|safe }}</li>{% endfor %}</ul></td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% endfor %}
+
+      {% if doc.categories %}
+      <div class="catlinks">
+        <a href="/wiki/categories/">Categories</a>:
+        <ul class="hlist hlist--bar">{% for c in doc.categories %}<li><a href="{{ c.url }}">{{ c.name }}</a></li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+    </div>
+
+    <footer class="wiki-foot">
+      {% if doc.updated %}<p>This entry was last updated on {{ doc.updated|date("long") }}.</p>{% endif %}
+      <p>{{ site.archive.name }} is curated as part of {{ site.title }}. Entries describe the world from within.</p>
+    </footer>
+  </article>
+</div>
+{% endblock %}

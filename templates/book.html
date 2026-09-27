@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block main %}
+<header class="page-head page-head--compact dotgrid">
+  <div class="container">
+    <p class="label"><a href="/novel/">Novel</a> / {{ book.subtitle or "Book" }}</p>
+  </div>
+</header>
+<div class="container book">
+  <div class="book-cover">
+    {% if book.cover %}<img src="{{ book.cover }}" alt="Cover of {{ book.title }}">{% endif %}
+  </div>
+  <div class="book-info panel">
+    <p class="dot-label">{{ (book.subtitle or "book")|lower }} ( {{ book.chapters|length }} )</p>
+    <h1 class="book-title">{{ book.title }}</h1>
+    <div class="book-synopsis">{{ book.synopsis|safe }}</div>
+    <dl class="facts">
+      {% if book.author %}<div><dt class="label">Author</dt><dd>{{ book.author }}</dd></div>{% endif %}
+      {% if book.status %}<div><dt class="label">Status</dt><dd>{{ book.status }}</dd></div>{% endif %}
+      <div><dt class="label">Length</dt><dd>{{ book.chapters|length }} chapters · {{ book.minutes }} min</dd></div>
+      {% if book.updated %}<div><dt class="label">Updated</dt><dd>{{ book.updated|date("medium") }}</dd></div>{% endif %}
+    </dl>
+    {% if book.chapters %}<a class="btn" href="{{ book.chapters[0].url }}">Start reading</a>{% endif %}
+  </div>
+</div>
+<section class="container section section--tight">
+  <header class="section-head"><p class="label">( contents )</p></header>
+  <ol class="chapter-list panel">
+    {% for ch in book.chapters %}
+    <li>
+      <a href="{{ ch.url }}">
+        <span class="ch-num">{{ ch.number }}</span>
+        <span class="ch-body">
+          <span class="ch-title">{{ ch.title }}</span>
+          {% if ch.subtitle %}<span class="ch-sub">{{ ch.subtitle }}</span>{% endif %}
+        </span>
+        <span class="label ch-meta">{{ ch.minutes }} min{% if ch.date %} · {{ ch.date|date("dots") }}{% endif %}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endblock %}

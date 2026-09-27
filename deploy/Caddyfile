@@ -1,0 +1,43 @@
+# Serves the built site (dist/) to this Mac only, at http://127.0.0.1:8080.
+# Cloudflare Tunnel publishes it to the internet and takes care of HTTPS.
+# Paths are relative to the project folder — the service starts there.
+#
+# After editing this file, restart the service on the Mac:
+#   sudo launchctl kickstart -k system/com.insignia.web
+
+{
+	admin off
+	auto_https off
+	persist_config off
+}
+
+:8080 {
+	bind 127.0.0.1
+	root * dist
+	encode zstd gzip
+	file_server
+
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options SAMEORIGIN
+	}
+
+	# CSS and JS URLs change on every build (?v=…), so browsers may keep them forever
+	@assets path /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	@media path /images/* /favicon.svg
+	header @media Cache-Control "public, max-age=3600"
+
+	# Pages and search.json: always check for a newer version, so updates show at once
+	@pages not path /assets/* /images/* /favicon.svg
+	header @pages Cache-Control "no-cache"
+
+	# "No signal" page; the real status code (404 etc.) is kept
+	handle_errors {
+		rewrite * /404.html
+		file_server
+	}
+}

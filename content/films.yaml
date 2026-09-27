@@ -1,0 +1,33 @@
+# Films, shown in this order (the first one is featured large).
+#   youtube:    the video ID or the full YouTube link
+#   duration:   in quotes, like "7:44"
+#   thumbnail:  optional — your own poster image instead of YouTube's
+#   wiki:       Archive entries the film relates to
+#
+# The three below are PLACEHOLDERS (Blender Studio open movies, CC BY) so the
+# page has something to play. Replace them with your own videos.
+
+- youtube: https://www.youtube.com/watch?v=WhWc3b3KhnY
+  title: Signal Test ( 01 )
+  duration: "7:44"
+  date: 2026-09-22
+  wiki: [Pylon]
+  description: |
+    *Placeholder — “Spring” by Blender Studio, CC BY 4.0.*
+    Replace with your first film in `content/films.yaml`. Descriptions are Markdown,
+    so you can link into the archive: [[pylon]], [[Halden]].
+
+- youtube: eRsGyueVLvQ
+  title: Signal Test ( 02 )
+  duration: "14:48"
+  date: 2026-09-14
+  wiki: [The Dimming]
+  description: |
+    *Placeholder — “Sintel” by the Blender Foundation, CC BY 3.0.*
+
+- youtube: Y-rmzh0PI3c
+  title: Signal Test ( 03 )
+  duration: "12:10"
+  date: 2026-09-06
+  description: |
+    *Placeholder — “Cosmos Laundromat” by the Blender Foundation, CC BY 4.0.*

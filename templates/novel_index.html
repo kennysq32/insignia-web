@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block main %}
+<header class="page-head dotgrid">
+  <div class="container">
+    <p class="label">( {{ books|length|pad }} ) {{ "book" if books|length == 1 else "books" }}</p>
+    <h1 class="page-title">Novel</h1>
+    <p class="page-intro">{{ site.novel_intro or "Serialized fiction from the world — read it in order, or follow the links into the Archive as you go." }}</p>
+  </div>
+</header>
+<div class="container stack">
+  {% for book in books %}
+  <a class="book-row panel" href="{{ book.url }}">
+    {% if book.cover %}<span class="book-row-cover"><img src="{{ book.cover }}" alt="" loading="lazy"></span>{% endif %}
+    <span class="book-row-body">
+      <span class="dot-label">{{ book.subtitle|lower or "book" }} ( {{ book.chapters|length }} )</span>
+      <span class="headline headline--xl">{{ book.title }}</span>
+      <span class="book-row-synopsis">{{ book.synopsis|striptags|truncate(260) }}</span>
+      <span class="label book-row-meta">{% if book.status %}{{ book.status }} · {% endif %}{{ book.chapters|length }} chapters · {{ book.minutes }} min{% if book.updated %} · updated {{ book.updated|date("dots") }}{% endif %}</span>
+      <span class="btn">Open book</span>
+    </span>
+  </a>
+  {% else %}
+  <p class="empty">No books yet. Add a folder to <code>content/novel/</code>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

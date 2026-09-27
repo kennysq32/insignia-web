@@ -1,0 +1,179 @@
+/* ==========================================================================
+   Reader — long-form typography for chapters and pages (Medium-inspired)
+   680px measure · 20/32 serif body · sans headings · quiet chrome
+   ========================================================================== */
+
+body.mode-reader { background: var(--reader-bg); color: var(--reader-ink); }
+.mode-reader .frost { --frost: color-mix(in srgb, var(--reader-bg) 82%, transparent); }
+
+.reader {
+  width: 100%; max-width: 728px; margin: 0 auto;
+  padding: 128px 24px 0;
+}
+
+/* ── Head ───────────────────────────────────────────────────────────────── */
+
+.reader-kicker { margin: 0 0 20px; color: var(--reader-ink-2); }
+.reader-title {
+  margin: 0;
+  font-family: var(--f-sans); font-weight: 700;
+  font-size: 42px; line-height: 52px; letter-spacing: -0.011em;
+  color: var(--reader-ink); text-wrap: balance;
+}
+.reader-subtitle {
+  margin: 10px 0 0;
+  font-family: var(--f-sans); font-weight: 400;
+  font-size: 22px; line-height: 30px; letter-spacing: -0.005em;
+  color: var(--reader-ink-2);
+}
+
+.byline { display: flex; align-items: center; gap: 12px; margin-top: 32px; font-size: 14px; line-height: 20px; }
+.avatar {
+  flex: none; position: relative; width: 44px; height: 44px; border-radius: 50%;
+  background: #000;
+  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.55) 1px, transparent 1.5px);
+  background-size: 6px 6px;
+}
+.avatar span {
+  position: absolute; inset: 0; margin: auto; width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+}
+.byline-text { display: grid; }
+.byline-name { font-weight: 500; }
+.byline-meta { color: var(--reader-ink-2); }
+
+.actionbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 28px; padding: 3px 0 3px 4px; min-height: 48px;
+  border-block: 1px solid var(--reader-line);
+  color: var(--reader-ink-2);
+}
+.actionbar-right { display: flex; gap: 2px; }
+.actionbar .icon-btn { color: var(--reader-ink-2); }
+.actionbar .icon-btn:hover { color: var(--reader-ink); }
+.icon-btn.is-done { color: var(--accent) !important; }
+
+/* ── Body ───────────────────────────────────────────────────────────────── */
+
+.prose {
+  margin-top: 40px;
+  font-family: var(--f-serif);
+  font-size: 20px; line-height: 32px; letter-spacing: -0.003em;
+  color: var(--reader-ink);
+  overflow-wrap: break-word;
+  font-optical-sizing: auto;
+}
+.prose > * { margin: 0; }
+.prose > * + * { margin-top: 1.56em; }
+/* A new line in the Markdown file is a new line on the page (places, dates, verse) */
+.prose p { white-space: pre-line; }
+
+.prose h2, .prose h3, .prose h4 {
+  font-family: var(--f-sans); font-weight: 700; color: var(--reader-ink); letter-spacing: -0.016em;
+}
+.prose h2 { font-size: 24px; line-height: 30px; margin-top: 2.2em; }
+.prose h3 { font-size: 20px; line-height: 24px; margin-top: 2em; }
+.prose h4 { font-size: 17px; line-height: 22px; margin-top: 1.8em; }
+.prose h2 + *, .prose h3 + *, .prose h4 + * { margin-top: 0.6em; }
+
+.prose a { color: inherit; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.prose a.wikilink { text-decoration-style: dotted; text-decoration-color: var(--reader-ink-2); }
+.prose a.wikilink:hover { text-decoration-style: solid; text-decoration-color: var(--accent); }
+.prose a.wikilink.new { text-decoration: none; cursor: text; }
+
+.prose strong { font-weight: 700; }
+.prose em { font-style: italic; }
+
+.prose ul, .prose ol { padding-left: 30px; }
+.prose li { padding-left: 4px; }
+.prose li + li { margin-top: 0.7em; }
+
+.prose blockquote {
+  padding-left: 20px; margin-left: -23px;
+  box-shadow: inset 3px 0 0 0 var(--reader-ink);
+  font-style: italic;
+}
+.prose blockquote p + p { margin-top: 1.2em; }
+.prose blockquote p { margin: 0; }
+/* > text {.pull} → large pull quote */
+.prose blockquote:has(> p.pull) { box-shadow: none; margin-left: 0; padding-left: 30px; }
+.prose p.pull { font-size: 28px; line-height: 40px; color: var(--reader-ink-2); }
+
+.prose hr {
+  border: 0; height: auto; margin-block: 2.6em !important; text-align: center; overflow: visible;
+}
+.prose hr::before {
+  content: "···"; display: inline-block;
+  font-family: var(--f-serif); font-size: 30px; line-height: 1; letter-spacing: 0.6em; padding-left: 0.6em;
+  color: var(--reader-ink);
+}
+
+.prose code { padding: 2px 4px; border-radius: 3px; background: var(--reader-line); font-size: 15px; }
+.prose pre { padding: 20px; border-radius: 4px; background: var(--reader-line); overflow-x: auto; font-size: 15px; line-height: 1.5; }
+.prose pre code { padding: 0; background: none; }
+
+.prose table { width: 100%; border-collapse: collapse; font-family: var(--f-sans); font-size: 15px; line-height: 1.5; }
+.prose th, .prose td { padding: 10px 12px; border-bottom: 1px solid var(--reader-line); text-align: left; }
+
+/* Drop cap in dot-matrix — the Nothing accent inside the Medium page */
+.prose.dropcap > p:first-of-type::first-letter {
+  float: left;
+  margin: 7px 12px 0 -2px;
+  font-family: var(--f-dot); font-variation-settings: "ROND" 100; font-weight: 900;
+  font-size: 100px; line-height: 0.7;
+  color: var(--reader-ink);
+}
+
+/* Figures: ![alt](src "caption"){.wide} / {.full} */
+.prose figure { margin-top: 2.2em; margin-bottom: 0.4em; }
+.prose figure + * { margin-top: 2em; }
+.prose figure img { width: 100%; }
+.prose figcaption {
+  margin-top: 10px; text-align: center;
+  font-family: var(--f-sans); font-size: 14px; line-height: 20px; color: var(--reader-ink-2);
+}
+.prose figure.wide { width: min(1040px, 100vw - 48px); margin-left: 50%; transform: translateX(-50%); }
+.prose figure.full { width: 100vw; margin-left: 50%; transform: translateX(-50%); }
+.prose figure.full figcaption { padding-inline: 24px; }
+.prose figure.yt .yt-embed { border-radius: 2px; }
+
+/* ── Notes & end matter ─────────────────────────────────────────────────── */
+
+.reader-notes {
+  margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--reader-line);
+  font-family: var(--f-sans); font-size: 14px; line-height: 1.6; color: var(--reader-ink-2);
+}
+.reader-notes h2 { margin: 0 0 8px; }
+.reader-notes ol { padding-left: 20px; margin: 0; }
+.reader-notes li p { margin: 0; }
+.reader-notes a { color: inherit; }
+.prose sup a.footnote-ref { color: var(--accent); text-decoration: none; font-family: var(--f-sans); font-size: 12px; padding: 0 1px; }
+
+.reader-end { width: 100%; max-width: 728px; margin: 0 auto; padding: 56px 24px 0; display: grid; gap: 40px; }
+.reader-entries { padding-top: 32px; border-top: 1px solid var(--reader-line); }
+.reader-entries h2 { margin: 0 0 8px; color: var(--reader-ink-2); }
+.reader-entries-intro { margin: 0 0 16px; font-size: 15px; color: var(--reader-ink-2); }
+.mode-reader .chip { border-color: var(--reader-line); background: var(--reader-line); }
+.mode-reader .chip:hover { border-color: var(--reader-ink); }
+
+.chapter-nav { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
+.chapter-nav-link {
+  display: grid; gap: 12px; align-content: start; min-height: 132px;
+  background: var(--bg); color: var(--ink); text-decoration: none;
+  transition: background-color 0.2s var(--ease);
+}
+.mode-reader .chapter-nav-link { background: color-mix(in srgb, var(--reader-ink) 4%, var(--reader-bg)); color: var(--reader-ink); }
+.chapter-nav-link .label { display: inline-flex; align-items: center; gap: 6px; color: var(--reader-ink-2); }
+.chapter-nav-link .label .icon { width: 14px; height: 14px; }
+.chapter-nav-link--next { text-align: right; justify-items: end; }
+.chapter-nav-link:hover .headline { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+
+@media (max-width: 728px) {
+  .reader { padding-top: 104px; }
+  .reader-title { font-size: 32px; line-height: 40px; }
+  .reader-subtitle { font-size: 20px; line-height: 28px; }
+  .prose { font-size: 18px; line-height: 28px; }
+  .prose blockquote { margin-left: 0; }
+  .prose p.pull { font-size: 24px; line-height: 34px; }
+  .prose.dropcap > p:first-of-type::first-letter { font-size: 74px; }
+  .chapter-nav { grid-template-columns: 1fr; }
+}

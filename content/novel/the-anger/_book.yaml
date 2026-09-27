@@ -1,0 +1,9 @@
+# One folder per book. Chapters are the .md files in this folder, in file-name order.
+title: The Anger
+subtitle: Book One
+author: The Insignia Project
+cover: /images/art/cover.svg
+status: Ongoing
+order: 1
+synopsis: |
+    앞에서는 보이지 않던 것들은 돌아서는 순간 보이기 시작한다.

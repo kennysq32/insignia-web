@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block main %}
+{% include "partials/wiki_top.html" %}
+<div class="wiki-layout wiki-layout--full">
+  <article class="wiki-main">
+    <header class="wiki-head">
+      <h1 class="wiki-h1" id="top">{% if category %}<span class="wiki-ns">Category:</span>{{ category.name }}{% else %}{{ list_title }}{% endif %}</h1>
+      <div class="wiki-tabs">
+        <div class="wiki-tabs-group"><span class="is-selected">{{ "Category" if category else "Index" }}</span></div>
+        <div class="wiki-tabs-group"><span class="is-selected">Read</span></div>
+      </div>
+    </header>
+    <div class="wiki-body">
+      <p class="wiki-tagline">From {{ site.archive.name }}, {{ site.archive.tagline or "the curated record" }}</p>
+      {% if category %}
+      <p class="hatnote">See also: <a href="/wiki/categories/">all categories</a>.</p>
+      <h2>Pages in category “{{ category.name }}”</h2>
+      <p>The following {{ total }} {{ "page is" if total == 1 else "pages are" }} in this category.</p>
+      {% else %}
+      <p>{{ site.archive.name }} holds {{ total }} {{ "entry" if total == 1 else "entries" }}, listed alphabetically.</p>
+      {% endif %}
+      <div class="mw-category">
+        {% for letter, pages in groups %}
+        <div class="mw-category-group">
+          <h3>{{ letter }}</h3>
+          <ul>{% for p in pages %}<li><a href="{{ p.url }}">{{ p.title }}</a>{% if not category and p.description %} <span class="mw-desc">— {{ p.description }}</span>{% endif %}</li>{% endfor %}</ul>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </article>
+</div>
+{% endblock %}

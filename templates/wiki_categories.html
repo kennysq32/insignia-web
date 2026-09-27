@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block main %}
+{% include "partials/wiki_top.html" %}
+<div class="wiki-layout wiki-layout--full">
+  <article class="wiki-main">
+    <header class="wiki-head">
+      <h1 class="wiki-h1" id="top">Categories</h1>
+      <div class="wiki-tabs">
+        <div class="wiki-tabs-group"><span class="is-selected">Special page</span></div>
+        <div class="wiki-tabs-group"><span class="is-selected">Read</span></div>
+      </div>
+    </header>
+    <div class="wiki-body">
+      <p class="wiki-tagline">From {{ site.archive.name }}, {{ site.archive.tagline or "the curated record" }}</p>
+      <p>The following {{ categories|length }} categories exist. Each lists the entries filed under it.</p>
+      <ul class="mw-catlist">
+        {% for c in categories %}
+        <li><a href="{{ c.url }}">{{ c.name }}</a> ({{ c.pages|length }} {{ "member" if c.pages|length == 1 else "members" }})</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </article>
+</div>
+{% endblock %}

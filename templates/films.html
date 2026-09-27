@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block main %}
+<header class="page-head dotgrid">
+  <div class="container">
+    <p class="label">( {{ films|length|pad }} ) films</p>
+    <h1 class="page-title">Films</h1>
+    <p class="page-intro">{{ site.films_intro or "Moving pictures from the world. Videos load from YouTube only when you press play." }}</p>
+  </div>
+</header>
+<div class="container films">
+  {% for f in films %}
+  <article class="film{% if loop.first %} film--feature{% endif %}" id="f-{{ f.id }}">
+    <div class="yt-embed" data-yt="{{ f.id }}" data-title="{{ f.title }}">
+      <img src="{{ f.thumbnail }}" alt="" loading="{{ 'eager' if loop.first else 'lazy' }}"{% if not f.custom_thumb %} data-yt-thumb{% endif %}>
+      <button class="yt-play" type="button" aria-label="Play {{ f.title }}"><span class="rec" aria-hidden="true"></span><span class="label">Play</span></button>
+    </div>
+    <div class="film-card">
+      <p class="dot-label">film ( {{ loop.index|pad }} )</p>
+      <h2 class="headline{% if loop.first %} headline--lg{% endif %}">{{ f.title }}</h2>
+      <p class="label film-meta">{% if f.date %}{{ f.date|date("dots") }}{% endif %}{% if f.date and f.duration %} · {% endif %}{{ f.duration }}</p>
+      <div class="film-desc">{{ f.html|safe }}</div>
+      {% if f.entries %}
+      <ul class="chips">{% for e in f.entries %}<li><a class="chip" href="{{ e.url }}">{{ e.title }}</a></li>{% endfor %}</ul>
+      {% endif %}
+    </div>
+  </article>
+  {% else %}
+  <p class="empty">No films yet. Add one to <code>content/films.yaml</code>.</p>
+  {% endfor %}
+</div>
+{% endblock %}

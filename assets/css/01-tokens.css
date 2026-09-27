@@ -1,0 +1,111 @@
+/* ==========================================================================
+   INSIGNIA — design tokens
+   Three reading modes share one system:
+     shell  → Nothing-style frames, dot-matrix type, frosted containers
+     reader → Medium-style long-form typography (novel chapters, pages)
+     wiki   → Wikipedia-style encyclopedia (the Archive)
+   Change colours and fonts here; everything else reads these variables.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Font-Lambda-Italic";
+  src: url("/fonts/lambda/Lambda-Italic.otf") format("otf");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+
+  /* Shell (Nothing) */
+  --bg: #f4f4f4;
+  --surface: #ffffff;
+  --frost: rgba(255, 255, 255, 0.8);
+  --ink: #000000;
+  --ink-2: #4a4a4a;
+  --ink-3: #8a8a8a;
+  --line: #e4e4e4;
+  --line-strong: #cdcdcd;
+  --dot: rgba(0, 0, 0, 0.2);
+  --hover: rgba(0, 0, 0, 0.05);
+  --accent: #d71921;               /* Nothing red — use sparingly */
+  --btn-bg: #040404;
+  --btn-ink: #ffffff;
+
+  /* Reader (Medium) */
+  --reader-bg: #ffffff;
+  --reader-ink: #242424;
+  --reader-ink-2: #6b6b6b;
+  --reader-line: #f2f2f2;
+
+  /* Archive (Wikipedia) */
+  --wiki-bg: #ffffff;
+  --wiki-ink: #202122;
+  --wiki-ink-2: #54595d;
+  --wiki-link: #3366cc;
+  --wiki-link-visited: #6b4ba1;
+  --wiki-new: #d73333;
+  --wiki-border: #a2a9b1;
+  --wiki-border-soft: #c8ccd1;
+  --wiki-box: #f8f9fa;
+  --wiki-head: #eaecf0;
+  --mp-green: #cef2e0;
+  --mp-green-edge: #a3bfb1;
+  --mp-blue: #cedff2;
+  --mp-blue-edge: #a3b0bf;
+  --navbox-title: #ccccff;
+  --navbox-group: #ddddff;
+
+  /* Type */
+  --f-dot: "Doto", "Geist Mono", ui-monospace, monospace;
+  --f-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, "Noto Sans KR", monospace;
+  --f-sans: "Geist", "Noto Sans KR", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --f-serif: "Source Serif 4", "Noto Serif KR", Georgia, Cambria, "Times New Roman", serif;
+  --f-wiki-serif: "Linux Libertine", "Georgia", "Times", "Source Serif 4", "Noto Serif KR", serif;
+  --f-wiki-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, "Liberation Sans", "Noto Sans KR", sans-serif;
+
+  /* Shape & motion */
+  --r-sm: 6px;
+  --r: 8px;
+  --gutter: 8px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --surface: #111111;
+  --frost: rgba(26, 26, 26, 0.78);
+  --ink: #ffffff;
+  --ink-2: #bdbdbd;
+  --ink-3: #7d7d7d;
+  --line: #242424;
+  --line-strong: #3a3a3a;
+  --dot: rgba(255, 255, 255, 0.2);
+  --hover: rgba(255, 255, 255, 0.07);
+  --btn-bg: #ffffff;
+  --btn-ink: #000000;
+
+  --reader-bg: #0f0f0f;
+  --reader-ink: #e6e6e6;
+  --reader-ink-2: #9a9a9a;
+  --reader-line: #262626;
+
+  --wiki-bg: #101418;
+  --wiki-ink: #eaecf0;
+  --wiki-ink-2: #a2a9b1;
+  --wiki-link: #88a3e8;
+  --wiki-link-visited: #a799cd;
+  --wiki-new: #fd7865;
+  --wiki-border: #54595d;
+  --wiki-border-soft: #3a3f45;
+  --wiki-box: #1a1d21;
+  --wiki-head: #27292d;
+  --mp-green: #1b2f27;
+  --mp-green-edge: #3a5a4b;
+  --mp-blue: #1a2839;
+  --mp-blue-edge: #3b4f69;
+  --navbox-title: #2a2a48;
+  --navbox-group: #222238;
+}

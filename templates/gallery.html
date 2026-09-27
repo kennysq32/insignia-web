@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+{% block main %}
+<header class="page-head dotgrid">
+  <div class="container">
+    <p class="label">( {{ works|length|pad(3) }} ) works</p>
+    <h1 class="page-title page-title--gallery">Gallery</h1>
+    <p class="page-intro">{{ site.gallery_intro or "Images, studies and artifacts from the world. Select a work to see it large." }}</p>
+  </div>
+</header>
+<div class="container">
+  {% if tags %}
+  <div class="chips" role="group" aria-label="Filter works">
+    <button class="chip is-active" type="button" data-filter="all" aria-pressed="true">All ( {{ works|length }} )</button>
+    {% for t in tags %}<button class="chip" type="button" data-filter="{{ t.slug }}" aria-pressed="false">{{ t.name }} ( {{ t.count }} )</button>{% endfor %}
+  </div>
+  {% endif %}
+  <ul class="masonry">
+    {% for w in works %}
+    <li class="work" id="w-{{ w.id }}" data-tags="{% for t in w.tags %}{{ t.slug }} {% endfor %}">
+      <button class="work-btn" type="button" data-work="{{ loop.index0 }}" aria-label="Open {{ w.title }}">
+        <img src="{{ w.thumb }}" alt="{{ w.alt }}" loading="lazy">
+      </button>
+      <div class="work-meta">
+        <span class="label work-id">( {{ w.id }} )</span>
+        <span class="work-title">{{ w.title }}</span>
+        {% if w.medium %}<span class="label work-medium">{{ w.medium }}</span>{% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+
+<dialog class="lightbox" data-lightbox aria-label="Artwork viewer">
+  <div class="lb-stage"><img alt="" data-lb-img></div>
+  <div class="lb-panel">
+    <div class="lb-head">
+      <p class="dot-label" data-lb-id></p>
+      <p class="label lb-count" data-lb-count></p>
+    </div>
+    <h2 class="headline" data-lb-title></h2>
+    <p class="label lb-meta" data-lb-meta></p>
+    <div class="lb-desc" data-lb-desc></div>
+    <ul class="chips" data-lb-entries></ul>
+  </div>
+  <button class="icon-btn lb-btn lb-close" type="button" data-lb-close aria-label="Close">{{ icon("close") }}</button>
+  <button class="icon-btn lb-btn lb-prev" type="button" data-lb-prev aria-label="Previous work">{{ icon("arrow-left") }}</button>
+  <button class="icon-btn lb-btn lb-next" type="button" data-lb-next aria-label="Next work">{{ icon("arrow-right") }}</button>
+</dialog>
+<script type="application/json" id="gallery-data">{{ works_json|tojson }}</script>
+{% endblock %}

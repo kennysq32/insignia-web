@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block main %}
+{% include "partials/wiki_top.html" %}
+<div class="wiki-layout wiki-layout--full">
+  <article class="wiki-main">
+    <header class="wiki-head">
+      <h1 class="wiki-h1 visually-hidden" id="top">Main page</h1>
+      <div class="wiki-tabs">
+        <div class="wiki-tabs-group"><span class="is-selected">Main page</span></div>
+        <div class="wiki-tabs-group"><span class="is-selected">Read</span><a href="/wiki/all/">Index</a></div>
+      </div>
+    </header>
+
+    <div class="wiki-body">
+      <div class="mp-welcome">
+        <h2 class="mp-welcome-title">Welcome to <a href="/wiki/">{{ site.archive.name }}</a>,</h2>
+        <p class="mp-welcome-sub">{{ site.archive.tagline or "the curated record" }}.</p>
+        <p class="mp-welcome-count"><a href="/wiki/all/">{{ stats.entries }}</a> entries · <a href="/novel/">{{ stats.chapters }}</a> chapters · <a href="/gallery/">{{ stats.works }}</a> works · <a href="/films/">{{ stats.films }}</a> films</p>
+      </div>
+
+      <div class="mp-cols">
+        <div class="mp-col">
+          {% if featured %}
+          <section class="mp-box mp-box--green">
+            <h2 class="mp-h2">From the featured entry</h2>
+            <div class="mp-box-body">
+              {% if featured.image %}<a class="mp-thumb" href="{{ featured.url }}"><img src="{{ featured.image }}" alt="" loading="lazy"></a>{% endif %}
+              <p>{{ featured.lead|safe }} (<b><a href="{{ featured.url }}">Full entry…</a></b>)</p>
+            </div>
+          </section>
+          {% endif %}
+          {% if recent %}
+          <section class="mp-box mp-box--green">
+            <h2 class="mp-h2">Recently added</h2>
+            <div class="mp-box-body">
+              <ul>
+                {% for a in recent %}<li><b><a href="{{ a.url }}">{{ a.title }}</a></b>{% if a.description %} — {{ a.description }}{% endif %} <span class="mp-date">({{ a.date|date("long") }})</span></li>{% endfor %}
+              </ul>
+            </div>
+          </section>
+          {% endif %}
+        </div>
+        <div class="mp-col">
+          {% if dyk %}
+          <section class="mp-box mp-box--blue">
+            <h2 class="mp-h2">Did you know…</h2>
+            <div class="mp-box-body"><ul>{% for d in dyk %}<li>{{ d|safe }}</li>{% endfor %}</ul></div>
+          </section>
+          {% endif %}
+          <section class="mp-box mp-box--blue">
+            <h2 class="mp-h2">Browse by category</h2>
+            <div class="mp-box-body">
+              <ul class="hlist hlist--dot">
+                {% for c in categories %}<li><a href="{{ c.url }}">{{ c.name }}</a>&nbsp;({{ c.pages|length }})</li>{% endfor %}
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <section class="mp-box mp-box--grey">
+        <h2 class="mp-h2">Elsewhere in {{ site.title }}</h2>
+        <div class="mp-box-body mp-elsewhere">
+          <a href="/novel/"><b>Novel</b><span>The serialized story, chapter by chapter.</span></a>
+          <a href="/gallery/"><b>Gallery</b><span>Images and studies from the world.</span></a>
+          <a href="/films/"><b>Films</b><span>Moving pictures and recordings.</span></a>
+        </div>
+      </section>
+    </div>
+  </article>
+</div>
+{% endblock %}

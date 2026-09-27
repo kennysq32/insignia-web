@@ -1,0 +1,17 @@
+# Navigation boxes shown at the bottom of Archive entries (like Wikipedia's).
+# In an entry's front matter:  navbox: world
+# Items are ordinary [[links]] — quote them so YAML reads them as text.
+
+world:
+  title: "The world of [[Insignia]]"
+  groups:
+    - label: Concepts
+      items: ["[[Insignia]]", "[[Pylon]]", "[[Glyph grammar]]"]
+    - label: Places
+      items: ["[[Halden]]"]
+    - label: Organizations
+      items: ["[[Lantern Guild]]"]
+    - label: People
+      items: ["[[Ines Varo]]", "[[Maren Oake]]"]
+    - label: Events
+      items: ["[[The Dimming]]"]

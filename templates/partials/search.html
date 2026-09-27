@@ -1,0 +1,13 @@
+{% from "partials/icons.html" import icon %}
+<dialog class="search-dlg" data-search aria-label="Search">
+  <div class="search-panel">
+    <div class="search-row">
+      {{ icon("search") }}
+      <input type="search" placeholder="Search entries, chapters, works…" autocomplete="off" spellcheck="false"
+             aria-label="Search the site" aria-controls="search-results" aria-autocomplete="list" data-search-input>
+      <button class="label search-esc" type="button" data-search-close>Esc</button>
+    </div>
+    <ul class="search-results" id="search-results" role="listbox" data-search-results></ul>
+    <p class="search-hint label">↑ ↓ to move · Enter to open · / to search anywhere</p>
+  </div>
+</dialog>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% from "partials/reader.html" import reader %}
+{% from "partials/icons.html" import icon %}
+{% block main %}
+{% call reader(doc, kicker=book.title ~ " · " ~ doc.label, author=book.author, contents_url=book.url) %}{{ doc.label }} / {{ book.chapters|length|pad }}{% endcall %}
+
+<footer class="reader-end">
+  {% if doc.entries %}
+  <section class="reader-entries">
+    <h2 class="label">( in {{ site.archive.name|lower }} )</h2>
+    <p class="reader-entries-intro">Entries mentioned in this chapter:</p>
+    <ul class="chips">
+      {% for e in doc.entries %}<li><a class="chip" href="{{ e.url }}">{{ e.title }}</a></li>{% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+  <nav class="chapter-nav" aria-label="Chapters">
+    {% if doc.prev %}
+    <a class="chapter-nav-link panel" href="{{ doc.prev.url }}" rel="prev">
+      <span class="label">{{ icon("arrow-left") }} Previous · {{ doc.prev.label }}</span>
+      <span class="headline">{{ doc.prev.title }}</span>
+    </a>
+    {% else %}<span></span>{% endif %}
+    {% if doc.next %}
+    <a class="chapter-nav-link chapter-nav-link--next panel" href="{{ doc.next.url }}" rel="next">
+      <span class="label">Next · {{ doc.next.label }} {{ icon("arrow-right") }}</span>
+      <span class="headline">{{ doc.next.title }}</span>
+    </a>
+    {% else %}
+    <a class="chapter-nav-link chapter-nav-link--next panel" href="{{ book.url }}">
+      <span class="label">End of the published chapters</span>
+      <span class="headline">Back to {{ book.title }}</span>
+    </a>
+    {% endif %}
+  </nav>
+</footer>
+{% endblock %}

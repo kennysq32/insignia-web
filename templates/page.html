@@ -1,0 +1,6 @@
+{% extends "base.html" %}
+{% from "partials/reader.html" import reader %}
+{% block main %}
+{% call reader(doc, kicker=doc.meta.kicker or "") %}{{ doc.meta.label or "" }}{% endcall %}
+<div class="reader-end"></div>
+{% endblock %}

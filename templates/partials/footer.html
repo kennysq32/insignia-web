@@ -1,0 +1,34 @@
+{% from "partials/icons.html" import icon %}
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-cols">
+      <div>
+        <h2 class="label">Explore</h2>
+        <ul>{% for item in site.nav %}<li><a href="{{ item.url }}">{{ item.label }}</a></li>{% endfor %}</ul>
+      </div>
+      <div>
+        <h2 class="label">{{ site.archive.name }}</h2>
+        <ul>
+          <li><a href="/wiki/">Main page</a></li>
+          <li><a href="/wiki/all/">All entries</a></li>
+          <li><a href="/wiki/categories/">Categories</a></li>
+        </ul>
+      </div>
+      {% if site.footer.links %}
+      <div>
+        <h2 class="label">Elsewhere</h2>
+        <ul>{% for link in site.footer.links %}<li><a href="{{ link.url }}" rel="noopener" target="_blank">{{ link.label }} {{ icon("external") }}</a></li>{% endfor %}</ul>
+      </div>
+      {% endif %}
+      <div class="footer-about">
+        <h2 class="label">( about )</h2>
+        <p>{{ site.description }}</p>
+      </div>
+    </div>
+    <p class="footer-mark" aria-hidden="true">{{ site.title }}</p>
+    <div class="footer-legal label">
+      <span>{{ site.footer.note or ("© " ~ today.year ~ " " ~ (site.author or site.title)) }}</span>
+      <span>{{ stats.chapters }} chapters · {{ stats.entries }} entries · {{ stats.works }} works · {{ stats.films }} films</span>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,27 @@
+{% from "partials/icons.html" import icon %}
+<div class="wiki-top">
+  <div class="wiki-top-inner">
+    <a class="wiki-brand" href="/wiki/">
+      <span class="wiki-brand-mark" aria-hidden="true"></span>
+      <span class="wiki-brand-text">
+        <span class="wiki-brand-name">{{ site.archive.name }}</span>
+        <span class="wiki-brand-tag">{{ site.archive.tagline or "The curated record" }}</span>
+      </span>
+    </a>
+    <form class="wiki-search" role="search" action="/wiki/all/" data-wiki-search>
+      <div class="wiki-search-field">
+        {{ icon("search") }}
+        <input type="search" name="q" placeholder="Search {{ site.archive.name }}" autocomplete="off" spellcheck="false"
+               aria-label="Search {{ site.archive.name }}" aria-controls="wiki-suggest" aria-autocomplete="list">
+        <ul class="wiki-suggest" id="wiki-suggest" role="listbox" hidden></ul>
+      </div>
+      <button class="wiki-btn" type="submit">Search</button>
+    </form>
+    <nav class="wiki-top-links" aria-label="{{ site.archive.name }}">
+      <a href="/wiki/">Main page</a>
+      <a href="/wiki/all/">All entries</a>
+      <a href="/wiki/categories/">Categories</a>
+      <a href="/wiki/" data-random>Random entry</a>
+    </nav>
+  </div>
+</div>

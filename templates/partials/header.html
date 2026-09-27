@@ -1,0 +1,22 @@
+{% from "partials/icons.html" import icon %}
+<header class="site-header" data-header>
+  <div class="header-bar frost">
+    <a class="logo" href="/" aria-label="{{ site.title }} — home">{{ site.title }}</a>
+    <nav class="header-nav" aria-label="Primary">
+      {% for item in site.nav %}
+      <a class="label{% if section == item.section %} is-active{% endif %}" href="{{ item.url }}"{% if section == item.section %} aria-current="page"{% endif %}>{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+    <div class="header-tools">
+      <button class="icon-btn" type="button" data-search-open aria-label="Search (press /)">{{ icon("search") }}</button>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch light or dark">{{ icon("theme") }}</button>
+      <button class="icon-btn menu-btn" type="button" data-menu-toggle aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">{{ icon("menu") }}</button>
+    </div>
+  </div>
+  <nav class="mobile-nav frost" id="mobile-nav" aria-label="Primary" hidden>
+    {% for item in site.nav %}
+    <a class="{% if section == item.section %}is-active{% endif %}" href="{{ item.url }}"><span class="label">( {{ loop.index|pad }} )</span>{{ item.label }}</a>
+    {% endfor %}
+  </nav>
+</header>
+{% if mode == "reader" %}<div class="progress" data-progress aria-hidden="true"></div>{% endif %}
