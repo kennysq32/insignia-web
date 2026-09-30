@@ -30,7 +30,7 @@ fi
 python3 build.py
 
 rsync -az --delete \
-  --exclude '.git/' --exclude 'tools/' --exclude '.dist-tmp*/' --exclude '.dist-old-*/' --exclude '.build.lock' --exclude '__pycache__/' --exclude '.DS_Store' \
+  --exclude '.git/' --exclude 'tools/' --exclude '.cache/' --exclude '.dist-tmp*/' --exclude '.dist-old-*/' --exclude '.build.lock' --exclude '__pycache__/' --exclude '.DS_Store' \
   ./ "$HOST:$REMOTE_DIR/"
 
 echo "✓ Published to $HOST:~/$REMOTE_DIR"

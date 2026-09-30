@@ -28,6 +28,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      # Korean fonts for the .xtc (Xteink) book downloads
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends fonts-noto-cjk
       - run: python build.py
         env:
           INSIGNIA_BASE_URL: ${{ steps.pages.outputs.base_path }}

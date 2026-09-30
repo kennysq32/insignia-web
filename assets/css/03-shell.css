@@ -255,6 +255,7 @@
 .book-synopsis p { margin: 0 0 0.8em; }
 .book-synopsis p:last-child { margin-bottom: 0; }
 .book .facts { width: 100%; }
+.book-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 800px) {
   .book { grid-template-columns: 1fr; }
   .book-cover { max-height: 70svh; aspect-ratio: 4 / 5; }

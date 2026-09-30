@@ -7,3 +7,4 @@ __pycache__/
 tools/
 .claude/settings.local.json
 .obsidian/
+.cache/

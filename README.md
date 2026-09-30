@@ -56,6 +56,7 @@ templates/                page layouts (Jinja2)
 assets/css/               styles — colours and fonts are all in 01-tokens.css
 assets/js/site.js         search, link previews, lightbox, video, theme
 build.py                  the builder
+md2xtc/                   the Xteink converter behind the "Download .xtc" button on book pages
 ```
 
 The images in `static/images/art/` are generated placeholders, and the three films are Blender
@@ -158,6 +159,21 @@ Videos load from YouTube (privacy-enhanced mode) only when someone presses play.
 
 See the comments at the top of `content/gallery.yaml` and `content/films.yaml`. Put the Archive
 entries a work depicts in `wiki: [...]` — the entries then list the work under *Appearances*.
+
+### E-reader download (.xtc)
+
+Every book page has a **Download .xtc** button: the whole book as one file for Xteink e-readers,
+made by `md2xtc/` during the build. It has a title page and one chapter per new page (plus a
+contents page when a book has more than one chapter). Wiki links become plain text, and videos
+are left out.
+
+- Text size and other settings: `xtc:` in `content/site.yaml`. `xtc: false` removes the button.
+- Needs `pillow`, `numpy` and `markdown-it-py`, and a Korean font (Noto CJK; on Debian/Ubuntu
+  `apt install fonts-noto-cjk`). Without them the site still builds, with no button and a warning.
+- Typesetting takes a few seconds, so each finished file is kept in `.cache/xtc/` and made again
+  only when its book changes.
+- `md2xtc/` is a copy of the converter in `~/Documents/notes/md2xtc`, with one addition: the
+  `breaks` setting, which keeps every new line as a line break, as the reader pages do.
 
 ---
 

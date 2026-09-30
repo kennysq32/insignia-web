@@ -57,6 +57,13 @@ novel_intro: Serialized fiction from the world. Read it in order, or follow the 
 gallery_intro: Paintings, studies and artifacts, Select a work to see it large.
 films_intro: Moving pictures from the world. Videos load from YouTube only when you press play.
 
+# ── E-reader download ────────────────────────────────────────────────────────
+# Every book page gets a "Download .xtc" button: the whole book for Xteink
+# readers (480 × 800 screen). font_size is in screen pixels. Other md2xtc
+# settings also work here (line_spacing, margin, font: sans). `xtc: false` = no button.
+xtc:
+  font_size: 24
+
 # ── The Archive (wiki) ───────────────────────────────────────────────────────
 archive:
   name: The Archive

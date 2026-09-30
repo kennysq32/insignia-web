@@ -56,6 +56,11 @@ ASSETS = ROOT / "assets"
 STATIC = ROOT / "static"
 DIST = ROOT / "dist"
 LOCK = ROOT / ".build.lock"
+MD2XTC = ROOT / "md2xtc"              # the Xteink converter, used for the book downloads
+XTC_CACHE = ROOT / ".cache" / "xtc"
+
+# md2xtc settings for the .xtc download on each book page. `xtc:` in site.yaml overrides them.
+XTC_DEFAULTS = {"font_size": 24, "cover": "on", "chapter_break": "on", "breaks": "on"}
 
 RESERVED_SLUGS = {"novel", "wiki", "gallery", "films", "assets", "images", "search.json"}
 
@@ -299,6 +304,8 @@ def youtube_html(video_id: str, caption: str = "", title: str = "") -> str:
 
 
 YT_LINE = re.compile(r"^\s*\[\[youtube:\s*([^\]\|]+?)\s*(?:\|\s*(.*?))?\s*\]\]\s*$", re.I)
+MD_IMAGE = re.compile(r"(!\[[^\]]*\]\()(/(?!/)[^)\s]+)")
+ATTR_LIST = re.compile(r"[ \t]*\{:?[ \t]*(?:[.#][\w-]+|[\w-]+=\S+)(?:[ \t]+(?:[.#][\w-]+|[\w-]+=\S+))*[ \t]*\}[ \t]*$", re.M)
 
 
 class YouTubePreprocessor(Preprocessor):
@@ -396,6 +403,7 @@ class Builder:
                 if STATIC.exists():
                     shutil.copytree(STATIC, self.out, dirs_exist_ok=True)
                 self.bundle_assets()
+                self.build_xtc()
                 self.render_site()
                 self.write_search_index()
                 replace_dist(self.out)
@@ -731,6 +739,86 @@ class Builder:
         (self.out / "assets").mkdir(exist_ok=True)
         (self.out / "assets" / "site.css").write_text(self.with_base(css), encoding="utf-8")
         (self.out / "assets" / "site.js").write_text(js, encoding="utf-8")
+
+    # ── e-reader download
+    def xtc_markdown(self, book) -> str:
+        """The whole book as one Markdown file for md2xtc: wiki links as plain text, no videos, real image paths."""
+        def wikilink(m):
+            target, label, trail = m.group(1).strip(), (m.group(2) or "").strip(), m.group(3) or ""
+            if target.lower().startswith("youtube:"):
+                return m.group(0)
+            page, _, section = target.partition("#")
+            page, section = page.strip(), section.strip()
+            if not page:
+                return label or section
+            return (label or (f"{page} § {section}" if section else page)) + trail
+
+        parts = []
+        for i, ch in enumerate(book["chapters"], 1):
+            body = "\n".join(line for line in ch["body"].splitlines() if not YT_LINE.match(line))
+            body = re.sub(WIKILINK_RE, wikilink, body)
+            body = ATTR_LIST.sub("", body)                                # {.pull} and friends are for the web page
+            body = re.sub(r"\[\^([^\]\s]+)\]", rf"[^{i}-\1]", body)      # footnote ids must stay unique in the book
+            body = MD_IMAGE.sub(lambda m: f"{m.group(1)}<{STATIC / m.group(2).lstrip('/')}>", body)
+            head = f"# {ch['title']}\n\n" + (f"*{ch['subtitle']}*\n\n" if ch["subtitle"] else "")
+            parts.append(head + body.strip() + "\n")
+        return "\n".join(parts)
+
+    def build_xtc(self):
+        """Each book as an .xtc file for Xteink e-readers, for the download button on its page.
+        Typesetting takes a few seconds, so unchanged books are reused from .cache/xtc/."""
+        for book in self.books:
+            book["xtc"] = None
+        spec = self.site.get("xtc", {})
+        if spec is False or not MD2XTC.exists():
+            return
+        if str(MD2XTC) not in sys.path:
+            sys.path.insert(0, str(MD2XTC))
+        import md2xtc
+        missing = md2xtc.check_parts(quiet=True)
+        if missing:
+            self.warn(f"No .xtc downloads: {', '.join(missing)} not installed (pip install -r requirements.txt)")
+            return
+        tool = hashlib.sha1(b"".join(p.read_bytes() for p in sorted(MD2XTC.glob("*.py")))).hexdigest()
+        XTC_CACHE.mkdir(parents=True, exist_ok=True)
+        for book in self.books:
+            if not book["chapters"]:
+                continue
+            text = self.xtc_markdown(book)
+            settings = {**XTC_DEFAULTS, "toc": "on" if len(book["chapters"]) > 1 else "off",
+                        **(spec if isinstance(spec, dict) else {})}
+            settings = {k: str(v) for k, v in settings.items()}
+            images = [(p, os.stat(p).st_mtime_ns) for p in re.findall(r"!\[[^\]]*\]\(<([^>]+)>", text) if os.path.isfile(p)]
+            key = hashlib.sha1(json.dumps([tool, settings, book["title"], book["author"], text, images],
+                                          ensure_ascii=False).encode()).hexdigest()[:12]
+            cached = XTC_CACHE / f"{book['slug']}-{key}.xtc"
+            if not cached.exists():
+                src, tmp = XTC_CACHE / f"{book['slug']}.md", cached.with_suffix(".tmp")
+                src.write_text(text, encoding="utf-8")
+                try:
+                    cfg = md2xtc.Config({**md2xtc.DEFAULTS, **settings})
+                    result = md2xtc.convert([str(src)], cfg, out_path=str(tmp), title=book["title"],
+                                            author=book["author"])
+                except Exception as e:                  # a download problem must not stop the site build
+                    tmp.unlink(missing_ok=True)
+                    self.warn(f"No .xtc download for {book['title']}: {e}")
+                    continue
+                finally:
+                    src.unlink(missing_ok=True)
+                if result["dropped"]:
+                    tmp.unlink()
+                    self.warn(f"No .xtc download for {book['title']}: {result['dropped']} characters have no font "
+                              "on this computer (Korean needs Noto CJK: apt install fonts-noto-cjk)")
+                    continue
+                for old in XTC_CACHE.glob(f"{book['slug']}-*.xtc"):
+                    old.unlink()
+                tmp.rename(cached)
+            url = f"{book['url']}{book['slug']}.xtc"
+            dest = self.out / url.strip("/")
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(cached, dest)
+            size = cached.stat().st_size
+            book["xtc"] = {"url": url, "name": f"{book['title']}.xtc", "size": f"{size / 1_000_000:.1f} MB"}
 
     def feed(self, limit=8):
         items = [{"date": c["date"], "kind": "Chapter", "title": c["title"], "sub": f"{c['book']['title']} · {c['label']}",

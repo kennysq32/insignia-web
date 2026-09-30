@@ -19,7 +19,11 @@
       <div><dt class="label">Length</dt><dd>{{ book.chapters|length }} chapters · {{ book.minutes }} min</dd></div>
       {% if book.updated %}<div><dt class="label">Updated</dt><dd>{{ book.updated|date("medium") }}</dd></div>{% endif %}
     </dl>
-    {% if book.chapters %}<a class="btn" href="{{ book.chapters[0].url }}">Start reading</a>{% endif %}
+    <div class="book-actions">
+      {% if book.chapters %}<a class="btn" href="{{ book.chapters[0].url }}">Start reading</a>{% endif %}
+      {% if book.xtc %}<a class="btn btn--ghost" href="{{ book.xtc.url }}" download="{{ book.xtc.name }}"
+         title="The whole book for Xteink e-readers ({{ book.xtc.size }})">Download .xtc</a>{% endif %}
+    </div>
   </div>
 </div>
 <section class="container section section--tight">
