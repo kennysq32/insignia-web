@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% from "partials/icons.html" import icon %}
+{% from "partials/books.html" import book_grid %}
 {% block main %}
 {% set first = featured_book.chapters[0] if featured_book and featured_book.chapters else none %}
 <section class="hero">
@@ -23,6 +24,19 @@
   </a>
   {% endif %}
 </section>
+
+{% if books %}
+<section class="section container" aria-labelledby="home-books-title" id="books">
+  <header class="section-head section-head--books">
+    <div>
+      <p class="label">( {{ books|length|pad }} books )</p>
+      <h2 class="section-title" id="home-books-title">{{ site.home.books_title or "The novels" }}</h2>
+    </div>
+    <a class="btn btn--ghost" href="/novel/">All books {{ icon("arrow-right") }}</a>
+  </header>
+  {{ book_grid(books, heading_tag="h3") }}
+</section>
+{% endif %}
 
 {% if tiles %}
 <section class="section container">

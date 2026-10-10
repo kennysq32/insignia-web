@@ -27,7 +27,8 @@ nav:
 home:
   hero_image: ""                      # empty = plain black. Example: /images/art/hero.svg
   kicker: ( mirage concept group presents )
-  featured_book: the-quiet-signal     # folder name in content/novel/
+  featured_book: the-ground-zero     # folder name in content/novel/
+  books_title: The novels
   featured_entry: Insignia            # an Archive entry title
   tiles_title: Enter the world
   tiles:

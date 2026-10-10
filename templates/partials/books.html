@@ -1,0 +1,22 @@
+{% macro book_grid(books, heading_tag="h2") %}
+<ol class="book-grid">
+  {% for book in books %}
+  <li>
+    <a class="book-card" href="{{ book.url }}" aria-label="{{ book.subtitle }}: {{ book.title }}">
+      <span class="book-card-cover">
+        {% if book.cover %}<img src="{{ book.cover }}" alt="" width="800" height="1200" loading="lazy">{% endif %}
+      </span>
+      <div class="book-card-body">
+        <span class="label book-card-number">( {{ loop.index|pad }} ) {{ book.subtitle }}</span>
+        <{{ heading_tag }} class="book-card-title">{{ book.title }}</{{ heading_tag }}>
+        <span class="label book-card-meta">
+          {% if book.genres %}<span class="book-card-genres">{{ book.genres|join(" · ") }}</span>{% endif %}
+          {% if book.chapters %}{{ book.chapters|length }} chapters{% if book.status %} · {{ book.status }}{% endif %}{% else %}{{ book.status or "준비 중" }}{% endif %}
+        </span>
+        <span class="book-card-action">{{ "Open book" if book.chapters else "공개 예정" }} <span aria-hidden="true">↗</span></span>
+      </div>
+    </a>
+  </li>
+  {% endfor %}
+</ol>
+{% endmacro %}

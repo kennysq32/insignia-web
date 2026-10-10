@@ -68,6 +68,16 @@ open movies used as stand-ins. Replace both with your own work.
 
 Every `.md` file starts with a **front matter** block between `---` lines, then Markdown.
 
+### Books
+
+The home page and `/novel/` share a thumbnail grid, ordered by `order` in each book's
+`_book.yaml`. The Ground Zero is first, followed by three books titled `제목 미정`.
+The existing chapters remain in `content/novel/the-anger/`; the two empty book folders
+show a coming-soon page until chapters are added. Edit each `_book.yaml` to set its
+title, cover, synopsis and status. Set genres as a list, such as
+`genres: [경제 스릴러, 전쟁경제, 정치]`, to display them on thumbnails and book pages.
+Number chapter filenames to set their reading order.
+
 ### A chapter — `content/novel/the-quiet-signal/04-next-chapter.md`
 
 ```markdown

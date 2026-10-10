@@ -15,20 +15,18 @@
     <div class="book-synopsis">{{ book.synopsis|safe }}</div>
     <dl class="facts">
       {% if book.author %}<div><dt class="label">Author</dt><dd>{{ book.author }}</dd></div>{% endif %}
-      {% if book.status %}<div><dt class="label">Status</dt><dd>{{ book.status }}</dd></div>{% endif %}
-      <div><dt class="label">Length</dt><dd>{{ book.chapters|length }} chapters · {{ book.minutes }} min</dd></div>
-      {% if book.updated %}<div><dt class="label">Updated</dt><dd>{{ book.updated|date("medium") }}</dd></div>{% endif %}
+      {% if book.genres %}<div><dt class="label">Genre</dt><dd>{{ book.genres|join(" · ") }}</dd></div>{% endif %}
     </dl>
-    <div class="book-actions">
+    {% if book.chapters %}<div class="book-actions">
       {% if book.chapters %}<a class="btn" href="{{ book.chapters[0].url }}">Start reading</a>{% endif %}
       {% if book.xtc %}<a class="btn btn--ghost" href="{{ book.xtc.url }}" download="{{ book.xtc.name }}"
          title="The whole book for Xteink e-readers ({{ book.xtc.size }})">Download .xtc</a>{% endif %}
-    </div>
+    </div>{% endif %}
   </div>
 </div>
 <section class="container section section--tight">
   <header class="section-head"><p class="label">( contents )</p></header>
-  <ol class="chapter-list panel">
+  {% if book.chapters %}<ol class="chapter-list panel">
     {% for ch in book.chapters %}
     <li>
       <a href="{{ ch.url }}">
@@ -42,5 +40,12 @@
     </li>
     {% endfor %}
   </ol>
+  {% else %}
+  <div class="panel book-coming-soon">
+    <p class="headline">새로운 이야기를 준비하고 있습니다.</p>
+    <p>원고가 공개되면 이곳에서 읽으실 수 있습니다.</p>
+    <a class="btn btn--ghost" href="/novel/">다른 책 보기</a>
+  </div>
+  {% endif %}
 </section>
 {% endblock %}

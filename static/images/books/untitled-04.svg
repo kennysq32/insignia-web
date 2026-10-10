@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1200" viewBox="0 0 800 1200">
+  <defs><pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse"><circle cx="16" cy="16" r="1.3" fill="#4e4e4e"/></pattern></defs>
+  <rect width="800" height="1200" fill="#222"/><rect width="800" height="1200" fill="url(#dots)"/>
+  <text x="64" y="92" font-family="Arial, sans-serif" font-size="25" fill="#eee" letter-spacing="7">INSIGNIA</text>
+  <text x="736" y="92" text-anchor="end" font-family="monospace" font-size="22" fill="#aaa">04</text>
+  <g fill="none" stroke="#606060" stroke-width="2"><path d="M120 770L400 360L680 770ZM180 820L400 450L620 820ZM244 870L400 540L556 870Z"/></g>
+  <text x="400" y="718" text-anchor="middle" font-family="Arial, sans-serif" font-size="290" font-weight="700" fill="#e7e7e7">04</text>
+  <path d="M376 870H424" stroke="#df2929" stroke-width="6"/>
+  <path d="M64 1000H736" stroke="#555"/>
+  <text x="64" y="1066" font-family="Arial, sans-serif" font-size="42" fill="#eee" letter-spacing="5">UNTITLED</text>
+  <text x="64" y="1138" font-family="monospace" font-size="15" fill="#999" letter-spacing="2">BOOK FOUR / WORKING COVER</text>
+</svg>

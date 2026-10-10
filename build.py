@@ -477,6 +477,7 @@ class Builder:
             book = {
                 "kind": "book", "slug": slug, "meta": meta, "url": f"/novel/{slug}/",
                 "title": str(meta.get("title") or folder.name), "subtitle": meta.get("subtitle", ""),
+                "genres": [str(g) for g in as_list(meta.get("genres"))],
                 "author": meta.get("author") or self.site.get("author", ""), "cover": meta.get("cover"),
                 "status": meta.get("status", ""), "order": meta.get("order", 999), "path": folder,
             }
@@ -858,7 +859,7 @@ class Builder:
                 raise BuildError(f"templates/{where}: {e.message}") from None
 
         home = self.site["home"]
-        counts = {"novel": len(self.chapters), "gallery": len(self.gallery), "films": len(self.films),
+        counts = {"novel": len(self.books), "gallery": len(self.gallery), "films": len(self.films),
                   "wiki": len(self.articles)}
         tiles = [{**t, "url": t.get("url") or f"/{t.get('section')}/", "count": counts.get(t.get("section"), "")}
                  for t in as_list(home.get("tiles")) if isinstance(t, dict)]
@@ -866,7 +867,7 @@ class Builder:
                              self.books[0] if self.books else None)
         featured_entry = self.lookup(home.get("featured_entry") or "") if home.get("featured_entry") else None
         page("home.html", "/", mode="shell", section="home", tiles=tiles, feed=self.feed(),
-             featured_book=featured_book, entry=featured_entry)
+             featured_book=featured_book, books=self.books, entry=featured_entry)
 
         # novel
         page("novel_index.html", "/novel/", mode="shell", section="novel", books=self.books,
