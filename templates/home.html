@@ -2,7 +2,6 @@
 {% from "partials/icons.html" import icon %}
 {% from "partials/books.html" import book_grid %}
 {% block main %}
-{% set first = featured_book.chapters[0] if featured_book and featured_book.chapters else none %}
 <section class="hero">
   {% if site.home.hero_image %}
   <img class="hero-art" src="{{ site.home.hero_image }}" alt="" fetchpriority="high">
@@ -13,20 +12,10 @@
     <h1 class="hero-title">{{ site.title }}</h1>
     {% if site.tagline %}<p class="hero-tagline">{{ site.tagline }}</p>{% endif %}
   </div>
-  {% if first %}
-  <a class="hero-card frost" href="{{ first.url }}">
-    <span class="card-copy">
-      <span class="dot-label">{{ featured_book.title|lower }} ( {{ first.number }} )</span>
-      <span class="headline">{{ first.label }}: {{ first.title }}</span>
-      {% if first.subtitle %}<span class="card-sub">{{ first.subtitle }}</span>{% endif %}
-    </span>
-    <span class="btn btn--block">Start reading</span>
-  </a>
-  {% endif %}
 </section>
 
 {% if books %}
-<section class="section container" aria-labelledby="home-books-title" id="books">
+<section class="section container home-books" aria-labelledby="home-books-title" id="books">
   <header class="section-head section-head--books">
     <div>
       <p class="label">( {{ books|length|pad }} books )</p>

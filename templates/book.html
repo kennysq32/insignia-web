@@ -33,6 +33,7 @@
         <span class="ch-num">{{ ch.number }}</span>
         <span class="ch-body">
           <span class="ch-title">{{ ch.title }}</span>
+          {% if ch.alternate_title %}<span class="ch-alternate-title">{{ ch.alternate_title }}</span>{% endif %}
           {% if ch.subtitle %}<span class="ch-sub">{{ ch.subtitle }}</span>{% endif %}
         </span>
         <span class="label ch-meta">{{ ch.minutes }} min{% if ch.date %} · {{ ch.date|date("dots") }}{% endif %}</span>

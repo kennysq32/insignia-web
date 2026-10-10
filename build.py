@@ -487,10 +487,13 @@ class Builder:
                 if cmeta.get("draft") and not self.drafts:
                     continue
                 m = re.match(r"^(\d+)[-_ .]+(.+)$", path.stem)
+                chapter_title = m.group(2) if m else path.stem
+                field_title = str(cmeta.get("title") or "").strip()
                 cslug = norm(cmeta.get("slug") or (m.group(2) if m else path.stem))
                 chapters.append({
                     "kind": "chapter", "book": book, "slug": cslug, "meta": cmeta, "body": body, "path": path,
-                    "title": str(cmeta.get("title") or cslug.replace("-", " ").capitalize()),
+                    "title": chapter_title,
+                    "alternate_title": field_title if field_title != chapter_title else "",
                     "subtitle": cmeta.get("subtitle", ""), "date": to_date(cmeta.get("date")),
                     "url": f"{book['url']}{cslug}/",
                 })
@@ -928,7 +931,9 @@ class Builder:
                           "s": a["summary"], "i": self.u(a["image"]), "a": [str(x) for x in as_list(a["meta"].get("aliases"))]})
         for c in self.chapters:
             items.append({"t": c["title"], "u": self.u(c["url"]), "k": "Chapter",
-                          "d": f"{c['book']['title']} · {c['label']}", "s": c["summary"], "i": self.u(c["image"])})
+                          "d": " · ".join(part for part in (c["alternate_title"], c["book"]["title"], c["label"]) if part),
+                          "s": c["summary"], "i": self.u(c["image"]),
+                          "a": [c["alternate_title"]] if c["alternate_title"] else []})
         for w in self.gallery:
             items.append({"t": w["title"], "u": self.u(w["url"]), "k": "Gallery", "d": w["medium"],
                           "s": w["summary"], "i": self.u(w["thumb"])})

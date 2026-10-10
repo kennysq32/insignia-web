@@ -77,6 +77,9 @@ show a coming-soon page until chapters are added. Edit each `_book.yaml` to set 
 title, cover, synopsis and status. Set genres as a list, such as
 `genres: [경제 스릴러, 전쟁경제, 정치]`, to display them on thumbnails and book pages.
 Number chapter filenames to set their reading order.
+Chapter headings use the filename without `.md` or its leading ordering number.
+The front matter `title` appears underneath in smaller text when it differs from
+the filename; `subtitle` remains a separate descriptive line. Both names are searchable.
 
 ### A chapter — `content/novel/the-quiet-signal/04-next-chapter.md`
 

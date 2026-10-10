@@ -20,6 +20,11 @@ body.mode-reader { background: var(--reader-bg); color: var(--reader-ink); }
   font-size: 42px; line-height: 52px; letter-spacing: -0.011em;
   color: var(--reader-ink); text-wrap: balance;
 }
+.reader-alternate-title {
+  margin: 6px 0 0;
+  font-family: var(--f-serif); font-size: 18px; line-height: 26px;
+  color: var(--reader-ink-2);
+}
 .reader-subtitle {
   margin: 10px 0 0;
   font-family: var(--f-sans); font-weight: 400;
@@ -165,6 +170,7 @@ body.mode-reader { background: var(--reader-bg); color: var(--reader-ink); }
 .chapter-nav-link .label { display: inline-flex; align-items: center; gap: 6px; color: var(--reader-ink-2); }
 .chapter-nav-link .label .icon { width: 14px; height: 14px; }
 .chapter-nav-link--next { text-align: right; justify-items: end; }
+.chapter-alternate-title { font-family: var(--f-serif); font-size: 15px; line-height: 1.4; color: var(--reader-ink-2); }
 .chapter-nav-link:hover .headline { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 
 @media (max-width: 728px) {

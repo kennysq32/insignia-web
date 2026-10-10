@@ -20,12 +20,14 @@
     <a class="chapter-nav-link panel" href="{{ doc.prev.url }}" rel="prev">
       <span class="label">{{ icon("arrow-left") }} Previous · {{ doc.prev.label }}</span>
       <span class="headline">{{ doc.prev.title }}</span>
+      {% if doc.prev.alternate_title %}<span class="chapter-alternate-title">{{ doc.prev.alternate_title }}</span>{% endif %}
     </a>
     {% else %}<span></span>{% endif %}
     {% if doc.next %}
     <a class="chapter-nav-link chapter-nav-link--next panel" href="{{ doc.next.url }}" rel="next">
       <span class="label">Next · {{ doc.next.label }} {{ icon("arrow-right") }}</span>
       <span class="headline">{{ doc.next.title }}</span>
+      {% if doc.next.alternate_title %}<span class="chapter-alternate-title">{{ doc.next.alternate_title }}</span>{% endif %}
     </a>
     {% else %}
     <a class="chapter-nav-link chapter-nav-link--next panel" href="{{ book.url }}">

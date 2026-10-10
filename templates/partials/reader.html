@@ -5,6 +5,7 @@
   <header class="reader-head">
     {% if kicker %}<p class="reader-kicker label">{{ kicker }}</p>{% endif %}
     <h1 class="reader-title">{{ doc.title }}</h1>
+    {% if doc.alternate_title %}<p class="reader-alternate-title">{{ doc.alternate_title }}</p>{% endif %}
     {% if doc.subtitle %}<p class="reader-subtitle">{{ doc.subtitle }}</p>{% endif %}
     <div class="byline">
       <span class="avatar" aria-hidden="true"><span></span></span>
