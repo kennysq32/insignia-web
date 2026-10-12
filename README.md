@@ -75,7 +75,7 @@ The home page and `/novel/` share a thumbnail grid, ordered by `order` in each b
 The existing chapters remain in `content/novel/the-anger/`; the two empty book folders
 show a coming-soon page until chapters are added. Edit each `_book.yaml` to set its
 title, cover, synopsis and status. Set genres as a list, such as
-`genres: [경제 스릴러, 전쟁경제, 정치]`, to display them on thumbnails and book pages.
+`genres: [금융 스릴러, 전쟁경제, 정치]`, to display them on thumbnails and book pages.
 Number chapter filenames to set their reading order.
 Chapter headings use the filename without `.md` or its leading ordering number.
 The front matter `title` appears underneath in smaller text when it differs from
