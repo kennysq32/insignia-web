@@ -207,9 +207,7 @@ and the output folder is `dist`.
 
 - **Your own Mac mini, via Cloudflare Tunnel.** See [deploy/README.md](deploy/README.md).
   After a one-time setup, publishing is a single command: `deploy/publish.sh you@mac-mini.local`.
-- **GitHub Pages** — this project is at `github.com/kennysq32/insignia-web` and publishes itself
-  to <https://kennysq32.github.io/insignia-web/> on every push to `main`. The workflow in
-  `.github/workflows/deploy.yml` sets the site address and sub-folder for you, so keep `base_url`
-  empty in `site.yaml`.
+- **Tailscale Funnel** — build the site locally and expose the `dist` directory with
+  `tailscale funnel --bg dist` after enabling Funnel for the device in your tailnet.
 - **Netlify / Cloudflare Pages** — build command `pip install -r requirements.txt && python3 build.py`,
   output directory `dist`.
