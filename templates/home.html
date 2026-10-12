@@ -9,8 +9,10 @@
   {% endif %}
   <div class="hero-inner">
     <p class="label hero-kicker">{{ site.home.kicker or "( a world in many media )" }}</p>
-    <h1 class="hero-title">{{ site.title }}</h1>
-    {% if site.tagline %}<p class="hero-tagline">{{ site.tagline }}</p>{% endif %}
+    <div class="hero-mark">
+      <h1 class="hero-title">{{ site.title }}</h1>
+      {% if site.tagline %}<p class="hero-tagline">{{ site.tagline }}</p>{% endif %}
+    </div>
   </div>
 </section>
 
