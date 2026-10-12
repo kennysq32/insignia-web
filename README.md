@@ -207,7 +207,10 @@ and the output folder is `dist`.
 
 - **Your own Mac mini, via Cloudflare Tunnel.** See [deploy/README.md](deploy/README.md).
   After a one-time setup, publishing is a single command: `deploy/publish.sh you@mac-mini.local`.
-- **Tailscale Funnel** — build the site locally and expose the `dist` directory with
-  `tailscale funnel --bg dist` after enabling Funnel for the device in your tailnet.
+- **Tailscale Funnel on Windows** — build the site locally, run
+  `python deploy/serve_local.py` to serve `dist` on `127.0.0.1:8765`, then run
+  `tailscale funnel --bg 8765` after enabling Funnel for the device in your tailnet.
+  This computer has an `Insignia Static Site` scheduled task that starts the local
+  server at sign-in; rebuild `dist` after changing the site.
 - **Netlify / Cloudflare Pages** — build command `pip install -r requirements.txt && python3 build.py`,
   output directory `dist`.
