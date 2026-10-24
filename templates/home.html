@@ -29,27 +29,9 @@
 </section>
 {% endif %}
 
-
+{% if entry %}
 <section class="section container">
   <div class="split">
-    <div class="panel">
-      <header class="panel-head">
-        <p class="label">( latest )</p>
-        <h2 class="section-title">Transmissions</h2>
-      </header>
-      <ol class="feed">
-        {% for item in feed %}
-        <li>
-          <a href="{{ item.url }}">
-            <span class="label feed-date">{{ item.date|date("dots") }}</span>
-            <span class="feed-title">{{ item.title }}{% if item.sub %}<span class="feed-sub">{{ item.sub }}</span>{% endif %}</span>
-            <span class="label feed-kind">{{ item.kind }}</span>
-          </a>
-        </li>
-        {% endfor %}
-      </ol>
-    </div>
-    {% if entry %}
     <a class="panel entry-card" href="{{ entry.url }}">
       {% if entry.image %}<span class="entry-art"><img src="{{ entry.image }}" alt="" loading="lazy"></span>{% endif %}
       <span class="label">( from {{ site.archive.name|lower }} )</span>
@@ -57,7 +39,7 @@
       <span class="entry-summary">{{ entry.summary }}</span>
       <span class="btn">Read the entry</span>
     </a>
-    {% endif %}
   </div>
 </section>
+{% endif %}
 {% endblock %}
