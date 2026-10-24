@@ -1,0 +1,10 @@
+.git
+.cache
+dist
+.dist-*
+__pycache__
+.venv
+.claude
+content
+static
+*.log

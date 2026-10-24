@@ -87,9 +87,8 @@ Run `python build.py serve`, then open <http://localhost:8000/editor/> or select
   manuscript, choose **이어 쓰기** to recover them. This does not replace saving.
   If the source was edited elsewhere, saving stops to avoid overwriting it.
 
-The editor and its write API are available only on the loopback development
-server. A normal `python build.py` static build omits the editing page and links.
-Published static hosting remains a reader-facing site.
+The development editor binds to loopback by default. Production uses the shared
+wiki authentication gateway described below. Static builds exclude the editor.
 
 ### Books
 
@@ -238,3 +237,46 @@ and the output folder is `dist`.
   server at sign-in; rebuild `dist` after changing the site.
 - **Netlify / Cloudflare Pages** — build command `pip install -r requirements.txt && python3 build.py`,
   output directory `dist`.
+
+
+## Production: wiki login and Docker
+
+The public site is <https://insignia.mastercable-cloud.site>. **위키** in the desktop,
+mobile and footer navigation opens <https://insignia-wiki.mastercable-cloud.site>.
+Reading remains public. The novel editor, unpublished manuscript API, previews and
+saves require the same Cloudflare email verification and password as wiki editing.
+Login starts at the wiki; a successful login there also establishes the novel session.
+An existing wiki login returns to the novel editor without another password prompt.
+The 30-day remember setting and logout apply to both sites.
+
+Run the production stack from the sibling `insignia-wiki` repository's `compose.yaml`.
+It builds this Dockerfile, mounts this repository at `/workspace`, and connects the
+Python server to the Node authentication gateway over a private Docker network.
+No host port is published. Both containers receive the same random gateway token
+as a Docker secret; never commit or print this token. The Python server requires it
+for editor HTML and manuscript requests, even from loopback. External write origins
+and sessions are verified by the gateway before requests reach Python.
+
+`INSIGNIA_DATA_ROOT` selects the writable content/static/dist/cache directory;
+code, templates and assets are loaded from the image. `INSIGNIA_BIND` defaults to
+`127.0.0.1`; an external binding requires `INSIGNIA_PROXY_TOKEN_FILE`. The production
+container sets `INSIGNIA_BIND=0.0.0.0` behind the private gateway. A failed initial
+production build aborts startup. Do not expose this Python service directly or run a
+second editor against the same content directory.
+
+The wiki owns the only password database. A short-lived, single-use handoff bound
+to the browser and exact novel origin establishes a separate host-only session cookie.
+No password or Cloudflare identity token is sent to Python. Both domains route through
+`http://insignia-wiki:4173` on the existing Cloudflare Docker tunnel; the wiki login
+paths retain their Cloudflare Access policy. See the wiki README for account management,
+secret generation, configuration and rollback.
+
+The three Ground Zero Markdown chapters and the cafe illustration were synchronized
+from the already-public October 12 deployment before switching hosting. This preserves
+the published prose and formatting instead of replacing it with older GitHub chapters.
+Editing backups remain in `.cache/editor/` and are never served publicly.
+
+Validate with `python -m unittest discover -s tests -v`. Tests use temporary manuscripts
+and cover real saves, stale revisions, rollback, drafts, private gateway authentication,
+encoded editor paths, HEAD requests and cross-origin rejection. The sibling wiki tests
+cover the shared login flow, one-time code expiry/replay, session migration and logout.

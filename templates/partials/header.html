@@ -9,6 +9,7 @@
       {% if editing %}<a class="label{% if section == 'editor' %} is-active{% endif %}" href="/editor/"{% if section == 'editor' %} aria-current="page"{% endif %}>소설 편집</a>{% endif %}
     </nav>
     <div class="header-tools">
+      {% if editing %}<!-- shared-account --><a class="label" href="/login/">로그인</a><!-- /shared-account -->{% endif %}
       <button class="icon-btn" type="button" data-search-open aria-label="Search (press /)">{{ icon("search") }}</button>
       <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch light or dark">{{ icon("theme") }}</button>
       <button class="icon-btn menu-btn" type="button" data-menu-toggle aria-label="Menu" aria-expanded="false" aria-controls="mobile-nav">{{ icon("menu") }}</button>

@@ -3,6 +3,7 @@
 import contextlib
 import io
 import json
+import os
 import shutil
 import tempfile
 import threading
@@ -143,6 +144,43 @@ class EditorTests(unittest.TestCase):
         for changes in ({"Host": "evil.test:8000"}, {"Origin": "http://evil.test"}, {"X-Insignia-Editor": ""}, {"Content-Type": "text/plain"}):
             with self.subTest(changes=changes), self.assertRaises(APIError):
                 self.api.check_request({**valid, **changes}, 8000, "POST")
+
+    def test_private_gateway_requires_secret_even_for_loopback_reads(self):
+        secret = self.root / "proxy-token"
+        secret.write_text("a" * 43)
+        valid = {"Host": "novel:8000", "Origin": "http://novel:8000", "X-Insignia-Proxy-Token": "a" * 43,
+                 "Content-Type": "application/json", "X-Insignia-Editor": "1"}
+        with patch.dict(os.environ, {"INSIGNIA_PROXY_TOKEN_FILE": str(secret)}):
+            self.api.check_request(valid, 8000, "POST")
+            for method in ("GET", "HEAD", "POST"):
+                for actual in ("", "b" * 43):
+                    with self.subTest(method=method, actual=actual), self.assertRaises(APIError):
+                        self.api.check_request({**valid, "Host": "localhost:8000", "X-Insignia-Proxy-Token": actual}, 8000, method)
+            with self.assertRaises(APIError):
+                self.api.check_request({**valid, "Origin": "https://evil.test"}, 8000, "POST")
+
+    def test_http_private_editor_rejects_encoded_paths_and_head_without_secret(self):
+        secret = self.root / "proxy-token"
+        secret.write_text("a" * 43)
+        build.Builder(editing=True).run()
+        class Handler(build.DevHandler):
+            editor = self.api
+            base = ""
+        server = build.http.server.ThreadingHTTPServer(("127.0.0.1", 0), partial(Handler, directory=str(build.DIST)))
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        origin = f"http://127.0.0.1:{server.server_port}"
+        with patch.dict(os.environ, {"INSIGNIA_PROXY_TOKEN_FILE": str(secret)}):
+            with urlopen(origin + "/") as response:
+                self.assertEqual(response.status, 200)
+            for method in ("GET", "HEAD"):
+                for path in ("/editor/", "/%65ditor/", "/%2feditor/", "/x%2f..%2feditor/", "/__editor/api/library"):
+                    with self.subTest(method=method, path=path), self.assertRaises(HTTPError) as caught:
+                        urlopen(Request(origin + path, method=method))
+                    self.assertEqual(caught.exception.code, 403)
+            with urlopen(Request(origin + "/__editor/api/library", headers={"X-Insignia-Proxy-Token": "a" * 43})) as response:
+                self.assertIn("books", json.load(response))
 
     def test_static_build_excludes_editor_and_draft_chapters(self):
         build.Builder().run()

@@ -21,6 +21,7 @@ import hashlib
 import http.server
 import json
 import os
+import posixpath
 import re
 import shutil
 import sys
@@ -34,7 +35,7 @@ from datetime import date, datetime
 from functools import partial
 from html import escape, unescape
 from pathlib import Path
-from urllib.parse import urlencode, urlsplit
+from urllib.parse import urlencode, urlsplit, unquote
 
 import markdown
 import yaml
@@ -50,14 +51,15 @@ try:
 except ImportError:                    # Windows: builds are not serialised
     fcntl = None
 
-ROOT = Path(__file__).resolve().parent
+RESOURCE_ROOT = Path(__file__).resolve().parent
+ROOT = Path(os.environ.get("INSIGNIA_DATA_ROOT", str(RESOURCE_ROOT))).resolve()
 CONTENT = ROOT / "content"
-TEMPLATES = ROOT / "templates"
-ASSETS = ROOT / "assets"
+TEMPLATES = RESOURCE_ROOT / "templates"
+ASSETS = RESOURCE_ROOT / "assets"
 STATIC = ROOT / "static"
 DIST = ROOT / "dist"
 LOCK = ROOT / ".build.lock"
-MD2XTC = ROOT / "md2xtc"              # the Xteink converter, used for the book downloads
+MD2XTC = RESOURCE_ROOT / "md2xtc"              # the Xteink converter, used for the book downloads
 XTC_CACHE = ROOT / ".cache" / "xtc"
 SITE_LOCK = threading.RLock()
 
@@ -1012,7 +1014,29 @@ class DevHandler(http.server.SimpleHTTPRequestHandler):
         self.wfile.write(payload)
         return True
 
+    def check_editor_access(self):
+        path = posixpath.normpath("/" + unquote(urlsplit(self.path).path).lstrip("/"))
+        if self.base and path.startswith(self.base + "/"):
+            path = path[len(self.base):]
+        if not re.match(r"^/(?:editor|__editor)(?:/|$)", path):
+            return True
+        from editor import APIError
+        try:
+            if self.editor is None:
+                raise APIError(503, "편집 서버를 사용할 수 없습니다.")
+            self.editor.check_request(self.headers, self.server.server_port, self.command)
+            return True
+        except APIError as error:
+            self.send_error(error.status, explain=str(error))
+            return False
+
+    def do_HEAD(self):
+        if self.check_editor_access():
+            super().do_HEAD()
+
     def do_GET(self):
+        if not self.check_editor_access():
+            return
         if not self.editor_request():
             super().do_GET()
 
@@ -1077,14 +1101,22 @@ def watch(drafts: bool):
 
 def serve(port: int, drafts: bool):
     from editor import EditorAPI
+    bind = os.environ.get("INSIGNIA_BIND", "127.0.0.1")
+    token_file = os.environ.get("INSIGNIA_PROXY_TOKEN_FILE")
+    if bind not in {"127.0.0.1", "localhost"} and not token_file:
+        sys.exit("External binding requires the authenticated private gateway")
+    if token_file and not re.fullmatch(r"[A-Za-z0-9_-]{43,}", Path(token_file).read_text().strip()):
+        sys.exit("A private gateway token is required")
     builder = safe_build(drafts, editing=True)
+    if token_file and builder is None:
+        sys.exit("Production build failed")
     DevHandler.base = builder.base if builder else ""
     DevHandler.editor = EditorAPI(sys.modules[__name__], drafts)
     DIST.mkdir(exist_ok=True)
     handler = partial(DevHandler, directory=str(DIST))
-    for candidate in range(port, port + 20):
+    for candidate in range(port, port + (1 if token_file else 20)):
         try:
-            httpd = http.server.ThreadingHTTPServer(("127.0.0.1", candidate), handler)
+            httpd = http.server.ThreadingHTTPServer((bind, candidate), handler)
             break
         except OSError:
             continue

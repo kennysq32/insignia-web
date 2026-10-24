@@ -1,8 +1,10 @@
-"""Local manuscript editing API, available only through build.py serve."""
+"""Manuscript editor: private authenticated gateway in production, loopback in development."""
 
 from __future__ import annotations
 
 import hashlib
+import hmac
+from pathlib import Path
 import os
 import re
 import tempfile
@@ -26,7 +28,13 @@ class EditorAPI:
     @staticmethod
     def check_request(headers, port, method):
         host = headers.get("Host", "")
-        if host not in {f"localhost:{port}", f"127.0.0.1:{port}"}:
+        token_file = os.environ.get("INSIGNIA_PROXY_TOKEN_FILE")
+        if token_file:
+            expected = Path(token_file).read_text().strip()
+            actual = headers.get("X-Insignia-Proxy-Token", "")
+            if len(expected) < 43 or not hmac.compare_digest(actual, expected):
+                raise APIError(403, "인증된 편집 서버에서 접속해 주세요.")
+        elif host not in {f"localhost:{port}", f"127.0.0.1:{port}"}:
             raise APIError(403, "로컬 주소에서 편집기를 열어 주세요.")
         origin = headers.get("Origin")
         if origin and origin != f"http://{host}":

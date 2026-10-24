@@ -8,3 +8,6 @@ tools/
 .claude/settings.local.json
 .obsidian/
 .cache/
+
+.venv/
+.env
