@@ -68,6 +68,29 @@ open movies used as stand-ins. Replace both with your own work.
 
 Every `.md` file starts with a **front matter** block between `---` lines, then Markdown.
 
+### Edit in the browser
+
+Run `python build.py serve`, then open <http://localhost:8000/editor/> or select
+**소설 편집** in the navigation. Book pages and chapters also link to their editor.
+
+- Select a book to edit its title, author, genres, cover, status and synopsis.
+- Select a chapter to edit its heading, alternate title, subtitle, date and Markdown
+  body. **미리보기** uses the same Markdown renderer as the reading pages, including
+  Archive links and footnotes. The formatting buttons insert Markdown.
+- **새 챕터** creates a chapter when you save it. New chapters start as drafts;
+  clear **초안으로 보관** to include them in the reading pages.
+- **저장** (Ctrl/Cmd + S) writes the source file and rebuilds the site. Chapter
+  filenames and existing reading URLs stay stable when their headings change.
+  Other front matter fields are preserved. Previous file contents are backed up
+  in `.cache/editor/<book>/`; a failed build restores the previous source.
+- Unsaved changes are temporarily kept in this browser. On returning to the
+  manuscript, choose **이어 쓰기** to recover them. This does not replace saving.
+  If the source was edited elsewhere, saving stops to avoid overwriting it.
+
+The editor and its write API are available only on the loopback development
+server. A normal `python build.py` static build omits the editing page and links.
+Published static hosting remains a reader-facing site.
+
 ### Books
 
 The home page and `/novel/` share a thumbnail grid, ordered by `order` in each book's
@@ -77,9 +100,10 @@ show a coming-soon page until chapters are added. Edit each `_book.yaml` to set 
 title, cover, synopsis and status. Set genres as a list, such as
 `genres: [금융 스릴러, 전쟁경제, 정치]`, to display them on thumbnails and book pages.
 Number chapter filenames to set their reading order.
-Chapter headings use the filename without `.md` or its leading ordering number.
+Chapter headings use `heading` in front matter when set by the editor; otherwise
+they use the filename without `.md` or its leading ordering number.
 The front matter `title` appears underneath in smaller text when it differs from
-the filename; `subtitle` remains a separate descriptive line. Both names are searchable.
+the main heading; `subtitle` remains a separate descriptive line. Both names are searchable.
 
 ### A chapter — `content/novel/the-quiet-signal/04-next-chapter.md`
 

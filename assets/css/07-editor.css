@@ -1,0 +1,106 @@
+/* Writing room — the shell's quiet panels, the reader's generous manuscript. */
+.editor { padding: 112px 16px 64px; }
+.editor [hidden] { display: none !important; }
+.editor-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+.editor-heading .label { display: flex; align-items: center; gap: 8px; color: var(--ink-2); }
+.editor-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.editor-heading h1 { margin: 18px 0 10px; font-size: clamp(26px, 3vw, 38px); font-weight: 500; letter-spacing: -0.06em; line-height: 1.3; }
+.editor-intro { margin: 0; color: var(--ink-2); font-size: 14px; }
+.editor-back { display: flex; gap: 12px; align-items: center; text-decoration: none; white-space: nowrap; padding-bottom: 4px; }
+.editor-layout { display: grid; grid-template-columns: 248px minmax(0, 1fr); gap: 12px; align-items: start; }
+.editor-sidebar { position: sticky; top: 88px; padding: 24px 16px; }
+.editor-sidebar > .label { display: block; margin-bottom: 16px; color: var(--ink-3); }
+.editor select { width: 100%; min-height: 44px; border: 1px solid var(--line-strong); border-radius: var(--r-sm); padding: 8px 28px 8px 10px; background: var(--surface); color: var(--ink); font: 500 14px var(--f-sans); text-overflow: ellipsis; }
+.editor-book-info { display: flex; justify-content: space-between; width: 100%; margin: 10px 0 28px; padding: 12px 10px; background: transparent; border: 0; border-radius: var(--r-sm); color: var(--ink-2); text-align: left; cursor: pointer; font: 13px var(--f-sans); }
+.editor-book-info[aria-current] { background: var(--hover); color: var(--ink); }
+.editor-chapters-heading { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); padding: 22px 10px 12px; color: var(--ink-3); }
+.editor-chapters-heading h2 { margin: 0; }
+.editor-chapters { display: grid; gap: 4px; }
+.editor-chapter { width: 100%; display: grid; grid-template-columns: 24px 1fr auto; gap: 8px; align-items: baseline; padding: 13px 10px; border: 0; border-radius: var(--r-sm); background: transparent; text-align: left; color: var(--ink-2); cursor: pointer; font: 14px var(--f-sans); }
+.editor-chapter:hover, .editor-book-info:hover { background: var(--hover); }
+.editor-chapter[aria-current] { background: var(--btn-bg); color: var(--btn-ink); }
+.editor-chapter > span:nth-child(2) { overflow-wrap: anywhere; }
+.editor-chapter small { font-size: 10px; white-space: nowrap; opacity: .65; }
+.editor-chapters .empty { font-size: 13px; padding: 24px 8px; }
+.editor-new { margin-top: 20px; }
+.editor-sidebar-note { color: var(--ink-3); font-size: 11px; line-height: 1.9; margin: 24px 10px 0; }
+.editor-workspace { min-width: 0; }
+.editor-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px 16px; margin-bottom: 8px; }
+.editor-view-switch { display: flex; gap: 2px; background: var(--bg); border-radius: var(--r-sm); padding: 3px; }
+.editor-view-switch button { border: 0; background: transparent; color: var(--ink-3); border-radius: 4px; padding: 8px 18px; font: 12px var(--f-sans); cursor: pointer; }
+.editor-view-switch button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 4px #0000000a; }
+.editor-save-group { display: flex; align-items: center; gap: 16px; }
+.editor-save-status { font-size: 11px; color: var(--ink-3); }
+.editor-save-status.is-dirty { color: var(--accent); }
+.editor kbd { font: 9px var(--f-mono); opacity: .55; margin-left: 8px; }
+.editor button:disabled { opacity: .4; cursor: default; }
+.editor-paper { padding: 30px 36px 0; min-height: 580px; }
+.editor-paper-top { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 22px; color: var(--ink-3); }
+.editor-paper-top p { margin: 0; }
+.editor-paper-top a { display: flex; align-items: center; gap: 4px; text-decoration: none; }
+.editor-paper-top .icon { width: 14px; height: 14px; }
+.editor input, .editor textarea { color: var(--ink); font-family: var(--f-sans); }
+.editor-title-input { display: block; width: 100%; padding: 0 0 22px; margin: 0 0 24px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: transparent; font-size: clamp(23px, 2.4vw, 32px); font-weight: 600; letter-spacing: -.04em; }
+.editor-title-input::placeholder { color: var(--ink-3); font-weight: 400; }
+.editor-detail-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+.editor-paper label:not(.visually-hidden) { display: grid; gap: 8px; font-size: 11px; color: var(--ink-2); }
+.editor-paper label > input:not([type="checkbox"]), .editor-synopsis { width: 100%; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--bg); padding: 11px 12px; font-size: 13px; min-height: 42px; }
+.editor-paper small { font-size: 11px; color: var(--ink-3); line-height: 1.5; }
+.editor-publication { margin: 18px 0 28px; align-items: center; }
+.editor-paper label.editor-draft-toggle { display: flex; align-items: center; gap: 9px; padding-top: 16px; cursor: pointer; }
+.editor-draft-toggle input { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; }
+.editor-draft-toggle span { display: grid; gap: 3px; color: var(--ink); font-size: 12px; }
+.editor-formatting { display: flex; align-items: center; gap: 3px; padding: 8px 0; border-block: 1px solid var(--line); }
+.editor-formatting button { display: grid; place-items: center; width: 34px; height: 34px; border: 0; border-radius: 4px; background: transparent; cursor: pointer; font: 16px var(--f-serif); }
+.editor-formatting button:hover { background: var(--hover); }
+.editor-formatting .label { margin-left: auto; color: var(--ink-3); font-size: 9px; }
+.editor textarea.editor-body { width: 100%; min-height: 480px; border: 0; background: transparent; resize: vertical; padding: 26px 0; font: 17px/1.95 var(--f-serif); letter-spacing: -.01em; tab-size: 2; }
+.editor-body::placeholder { color: var(--ink-3); }
+.editor-book-fields { display: grid; gap: 20px; padding-bottom: 24px; }
+.editor-synopsis { resize: vertical; min-height: 190px; line-height: 1.9; }
+.editor-paper-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; color: var(--ink-3); border-top: 1px solid var(--line); margin: 0 -36px; padding: 14px 36px; font: 10px var(--f-mono); }
+.editor-footnote { margin: 14px 0 0; color: var(--ink-3); font-size: 11px; line-height: 1.8; text-align: center; }
+.editor-notice { background: color-mix(in srgb, var(--accent) 8%, var(--surface)); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent); padding: 16px; border-radius: var(--r-sm); margin-bottom: 16px; font-size: 13px; }
+.editor-recovery { margin-bottom: 8px; padding: 14px 16px; border: 1px solid var(--line-strong); border-radius: var(--r); font-size: 12px; background: var(--surface); }
+.editor-recovery p { margin: 0 0 10px; }
+.editor-recovery button { cursor: pointer; font: 12px var(--f-sans); background: transparent; color: var(--ink); border: 0; padding: 4px 14px 4px 0; text-decoration: underline; text-underline-offset: 4px; }
+.editor-preview iframe { display: block; width: 100%; min-height: 560px; border: 0; background: var(--reader-bg); }
+.editor-preview-status { font-size: 12px; color: var(--ink-3); margin: 0 0 16px; }
+.editor-loading { min-height: 400px; display: grid; place-items: center; color: var(--ink-3); font-size: 13px; }
+.editor-leave-dialog { width: min(420px, calc(100vw - 32px)); padding: 28px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); color: var(--ink); }
+.editor-leave-dialog::backdrop { background: #0006; backdrop-filter: blur(3px); }
+.editor-leave-dialog h2 { margin: 0 0 16px; font-size: 20px; letter-spacing: -.04em; }
+.editor-leave-dialog p { color: var(--ink-2); font-size: 13px; line-height: 1.9; margin: 0 0 24px; }
+.editor-leave-dialog > div { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.reader-edit-link { min-height: 34px; padding: 0 12px; }
+@media (min-width: 1300px) { .editor > .container { max-width: 1320px; } }
+@media (max-width: 800px) {
+  .editor { padding: 100px 8px 40px; }
+  .editor-layout { grid-template-columns: 190px minmax(0, 1fr); gap: 8px; }
+  .editor-sidebar { padding: 20px 12px; }
+  .editor-paper { padding: 24px 20px 0; }
+  .editor-paper-footer { margin-inline: -20px; padding-inline: 20px; }
+  .editor-toolbar { padding: 10px; }
+  .editor-save-group { gap: 8px; }
+  .editor kbd { display: none; }
+}
+@media (max-width: 600px) {
+  .editor-heading { align-items: flex-start; margin-bottom: 24px; }
+  .editor-heading h1 { font-size: 26px; }
+  .editor-back { font-size: 9px; margin-top: 14px; gap: 3px; }
+  .editor-intro { font-size: 12px; }
+  .editor-layout { grid-template-columns: 1fr; }
+  .editor-sidebar { position: static; padding: 16px; }
+  .editor-sidebar > .label, .editor-sidebar-note, .editor-chapters-heading { display: none; }
+  .editor-book-info { margin: 6px 0; padding-block: 8px; }
+  .editor-chapters { display: flex; overflow-x: auto; gap: 4px; }
+  .editor-chapter { width: auto; flex: 0 0 auto; padding: 10px; max-width: 230px; }
+  .editor-new { min-height: 36px; margin-top: 12px; }
+  .editor-save-status { max-width: 120px; font-size: 10px; }
+  .editor-view-switch button { padding-inline: 12px; }
+  .editor-detail-row { grid-template-columns: 1fr; gap: 14px; }
+  .editor-publication { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .editor-draft-toggle small { font-size: 10px; }
+  .editor textarea.editor-body { font-size: 16px; min-height: 420px; }
+  .editor-footnote { text-align: left; padding-inline: 8px; }
+}

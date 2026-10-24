@@ -17,10 +17,11 @@
       {% if book.author %}<div><dt class="label">Author</dt><dd>{{ book.author }}</dd></div>{% endif %}
       {% if book.genres %}<div><dt class="label">Genre</dt><dd>{{ book.genres|join(" · ") }}</dd></div>{% endif %}
     </dl>
-    {% if book.chapters %}<div class="book-actions">
+    {% if book.chapters or editing %}<div class="book-actions">
       {% if book.chapters %}<a class="btn" href="{{ book.chapters[0].url }}">Start reading</a>{% endif %}
       {% if book.xtc %}<a class="btn btn--ghost" href="{{ book.xtc.url }}" download="{{ book.xtc.name }}"
          title="The whole book for Xteink e-readers ({{ book.xtc.size }})">Download .xtc</a>{% endif %}
+      {% if editing %}<a class="btn btn--ghost" href="{{ book.edit_url }}">소설 편집</a>{% endif %}
     </div>{% endif %}
   </div>
 </div>

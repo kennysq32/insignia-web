@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+{% block main %}
+<div class="editor" data-editor lang="ko">
+  <header class="editor-heading container">
+    <div>
+      <p class="label"><span class="editor-dot" aria-hidden="true"></span> INSIGNIA / WRITING ROOM</p>
+      <h1>이야기를 이어 쓰세요.</h1>
+      <p class="editor-intro">한 문장씩, 당신의 세계를 완성하는 곳.</p>
+    </div>
+    <a class="editor-back label" href="/novel/">책장으로 {{ icon("arrow-right") }}</a>
+  </header>
+
+  <p class="editor-notice container" data-editor-error role="alert" hidden></p>
+  <div class="editor-layout container">
+    <aside class="editor-sidebar panel" aria-label="원고 선택">
+      <label class="label" for="editor-book">( 내 서재 )</label>
+      <select id="editor-book" data-book-select aria-label="편집할 책" disabled><option>책을 불러오는 중…</option></select>
+      <button class="editor-book-info" type="button" data-book-info>책 정보 <span aria-hidden="true">↗</span></button>
+      <div class="editor-chapters-heading"><h2 class="label">CHAPTERS</h2><span class="label" data-chapter-count>00</span></div>
+      <nav class="editor-chapters" data-chapter-list aria-label="챕터 목록"></nav>
+      <button class="btn btn--ghost btn--block editor-new" type="button" data-new-chapter disabled><span aria-hidden="true">＋</span> 새 챕터</button>
+      <p class="editor-sidebar-note">아직 공개하지 않을 이야기는<br>초안으로 보관하세요.</p>
+    </aside>
+
+    <section class="editor-workspace" aria-label="소설 편집">
+      <div class="editor-toolbar panel">
+        <div class="editor-view-switch" role="group" aria-label="편집 화면">
+          <button type="button" data-editor-view="write" aria-pressed="true">원고</button>
+          <button type="button" data-editor-view="preview" aria-pressed="false">미리보기</button>
+        </div>
+        <div class="editor-save-group">
+          <span class="editor-save-status" data-save-status role="status" aria-live="polite">불러오는 중</span>
+          <button class="btn" type="submit" form="manuscript-form" data-save disabled>저장 <kbd>Ctrl S</kbd></button>
+        </div>
+      </div>
+
+      <div class="editor-recovery" data-recovery hidden>
+        <p>이 브라우저에 저장하지 않은 원고가 있습니다.</p>
+        <button type="button" data-restore>이어 쓰기</button>
+        <button type="button" data-discard>임시 원고 지우기</button>
+      </div>
+
+      <form id="manuscript-form" class="editor-paper panel" data-editor-form novalidate hidden>
+        <div class="editor-paper-top"><p class="label" data-document-label>BOOK INFORMATION</p><a class="label" data-read-link hidden>읽기 화면 {{ icon("external") }}</a></div>
+        <div data-write-pane>
+          <label class="visually-hidden" for="manuscript-title">제목</label>
+          <input id="manuscript-title" class="editor-title-input" name="title" placeholder="제목을 입력하세요" maxlength="1000" required autocomplete="off">
+
+          <div data-chapter-fields hidden>
+            <div class="editor-detail-row">
+              <label>보조 제목<input name="alternate_title" placeholder="다른 언어의 제목 등" maxlength="1000"></label>
+              <label>부제<input name="subtitle" data-chapter-subtitle placeholder="이 챕터를 설명하는 한 줄" maxlength="1000"></label>
+            </div>
+            <div class="editor-detail-row editor-publication">
+              <label>날짜<input name="date" type="date"></label>
+              <label class="editor-draft-toggle"><input name="draft" type="checkbox"><span>초안으로 보관<small>읽기 페이지에 표시하지 않습니다.</small></span></label>
+            </div>
+            <div class="editor-formatting" role="group" aria-label="Markdown 서식">
+              <button type="button" data-format="bold" aria-label="굵게" title="굵게"><strong>B</strong></button>
+              <button type="button" data-format="italic" aria-label="기울임" title="기울임"><em>I</em></button>
+              <button type="button" data-format="heading" aria-label="소제목" title="소제목">H₂</button>
+              <button type="button" data-format="quote" aria-label="인용문" title="인용문">“</button>
+              <button type="button" data-format="break" aria-label="장면 구분선" title="장면 구분선">―</button>
+              <button type="button" data-format="link" aria-label="아카이브 연결" title="아카이브 연결">{{ icon("link") }}</button>
+              <span class="label">MARKDOWN</span>
+            </div>
+            <label class="visually-hidden" for="manuscript-body">챕터 본문</label>
+            <textarea id="manuscript-body" class="editor-body" name="body" placeholder="이야기의 첫 문장을 적어보세요…" spellcheck="false"></textarea>
+          </div>
+
+          <div class="editor-book-fields" data-book-fields hidden>
+            <div class="editor-detail-row">
+              <label>권 / 시리즈 이름<input name="book_subtitle" placeholder="Book One" maxlength="1000"></label>
+              <label>작가<input name="author" placeholder="작가 이름" maxlength="1000"></label>
+              <label>장르<input name="genres" placeholder="스릴러, 판타지, 정치" maxlength="1000"><small>쉼표로 구분해 주세요.</small></label>
+              <label>연재 상태<input name="status" placeholder="연재 중 / 완결" maxlength="1000"></label>
+            </div>
+            <label>표지 이미지<input name="cover" placeholder="/images/books/cover.svg" maxlength="1000"></label>
+            <label>책 소개<textarea name="synopsis" class="editor-synopsis" placeholder="어떤 이야기를 들려주고 싶나요?"></textarea><small>Markdown을 사용할 수 있습니다.</small></label>
+          </div>
+        </div>
+        <div class="editor-preview" data-preview-pane hidden>
+          <p class="editor-preview-status" data-preview-status role="status"></p>
+          <iframe title="원고 미리보기" sandbox="allow-popups" referrerpolicy="no-referrer" data-preview-frame></iframe>
+        </div>
+        <footer class="editor-paper-footer"><span data-word-count>0자</span><span data-editor-hint>Ctrl + S로 저장</span></footer>
+      </form>
+      <div class="editor-loading panel" data-editor-loading role="status">당신의 이야기를 불러오고 있습니다.</div>
+      <p class="editor-footnote">저장한 내용은 읽기 화면에 바로 반영됩니다. 초안은 편집기에서만 볼 수 있습니다.</p>
+    </section>
+  </div>
+  <noscript><p class="container">소설 편집기를 사용하려면 JavaScript를 켜 주세요.</p></noscript>
+  <dialog class="editor-leave-dialog" data-leave-dialog aria-labelledby="editor-leave-title">
+    <h2 id="editor-leave-title">다른 원고로 이동할까요?</h2>
+    <p>변경 내용을 아직 저장하지 않았습니다.<br>임시 원고는 이 브라우저에 보관됩니다.</p>
+    <div><button class="btn btn--ghost" type="button" data-stay>계속 편집</button><button class="btn" type="button" data-leave>임시 보관 후 이동</button></div>
+  </dialog>
+</div>
+{% endblock %}

@@ -34,6 +34,7 @@ from datetime import date, datetime
 from functools import partial
 from html import escape, unescape
 from pathlib import Path
+from urllib.parse import urlencode, urlsplit
 
 import markdown
 import yaml
@@ -58,6 +59,7 @@ DIST = ROOT / "dist"
 LOCK = ROOT / ".build.lock"
 MD2XTC = ROOT / "md2xtc"              # the Xteink converter, used for the book downloads
 XTC_CACHE = ROOT / ".cache" / "xtc"
+SITE_LOCK = threading.RLock()
 
 # md2xtc settings for the .xtc download on each book page. `xtc:` in site.yaml overrides them.
 XTC_DEFAULTS = {"font_size": 24, "cover": "on", "chapter_break": "on", "breaks": "on"}
@@ -374,8 +376,9 @@ def split_footnotes(html: str):
 # ─── The builder ────────────────────────────────────────────────────────────
 
 class Builder:
-    def __init__(self, drafts: bool = False):
+    def __init__(self, drafts: bool = False, editing: bool = False):
         self.drafts = drafts
+        self.editing = editing
         self.warnings: list[str] = []
         self.missing: dict[str, set] = {}
 
@@ -480,6 +483,7 @@ class Builder:
                 "genres": [str(g) for g in as_list(meta.get("genres"))],
                 "author": meta.get("author") or self.site.get("author", ""), "cover": meta.get("cover"),
                 "status": meta.get("status", ""), "order": meta.get("order", 999), "path": folder,
+                "edit_url": "/editor/?" + urlencode({"book": folder.name}),
             }
             chapters = []
             for path in sorted(folder.glob("*.md")):
@@ -487,7 +491,7 @@ class Builder:
                 if cmeta.get("draft") and not self.drafts:
                     continue
                 m = re.match(r"^(\d+)[-_ .]+(.+)$", path.stem)
-                chapter_title = m.group(2) if m else path.stem
+                chapter_title = str(cmeta.get("heading") or (m.group(2) if m else path.stem))
                 field_title = str(cmeta.get("title") or "").strip()
                 cslug = norm(cmeta.get("slug") or (m.group(2) if m else path.stem))
                 chapters.append({
@@ -496,6 +500,7 @@ class Builder:
                     "alternate_title": field_title if field_title != chapter_title else "",
                     "subtitle": cmeta.get("subtitle", ""), "date": to_date(cmeta.get("date")),
                     "url": f"{book['url']}{cslug}/",
+                    "edit_url": "/editor/?" + urlencode({"book": folder.name, "chapter": path.name}),
                 })
             for i, ch in enumerate(chapters):
                 ch["number"] = str(ch["meta"].get("number") or f"{i + 1:02d}")
@@ -852,7 +857,8 @@ class Builder:
         env.filters["pad"] = lambda n, width=2: str(n).zfill(width)
         stats = {"books": len(self.books), "chapters": len(self.chapters), "works": len(self.gallery),
                  "films": len(self.films), "entries": len(self.articles)}
-        env.globals.update(site=self.site, asset_version=self.asset_version, stats=stats, today=date.today())
+        env.globals.update(site=self.site, asset_version=self.asset_version, stats=stats, today=date.today(),
+                           editing=self.editing)
 
         def page(template, url, **ctx):
             try:
@@ -875,6 +881,8 @@ class Builder:
         # novel
         page("novel_index.html", "/novel/", mode="shell", section="novel", books=self.books,
              page_title="Novel")
+        if self.editing:
+            page("editor.html", "/editor/", mode="shell", section="editor", page_title="소설 편집")
         for book in self.books:
             page("book.html", book["url"], mode="shell", section="novel", book=book, page_title=book["title"],
                  page_description=truncate(strip_tags(book["synopsis"]), 200), page_image=book["cover"])
@@ -961,6 +969,56 @@ class Builder:
 
 class DevHandler(http.server.SimpleHTTPRequestHandler):
     base = ""
+    editor = None
+
+    def editor_request(self):
+        path = urlsplit(self.path).path
+        if self.base and path.startswith(self.base + "/"):
+            path = path[len(self.base):]
+        if not path.startswith("/__editor/api/"):
+            return False
+        from editor import APIError
+        try:
+            if self.editor is None:
+                raise APIError(503, "편집 서버를 사용할 수 없습니다.")
+            self.editor.check_request(self.headers, self.server.server_port, self.command)
+            body = None
+            if self.command == "POST":
+                try:
+                    length = int(self.headers.get("Content-Length", "0"))
+                except ValueError:
+                    raise APIError(400, "요청 크기가 올바르지 않습니다.") from None
+                if not 0 < length <= 2_000_000:
+                    raise APIError(413, "원고는 2MB 이하로 저장해 주세요.")
+                try:
+                    body = json.loads(self.rfile.read(length))
+                except (ValueError, UnicodeDecodeError):
+                    raise APIError(400, "요청 내용을 읽을 수 없습니다.") from None
+                if not isinstance(body, dict):
+                    raise APIError(400, "요청 내용이 올바르지 않습니다.")
+            result = self.editor.handle(self.command, path, urlsplit(self.path).query, body)
+            status = 200
+        except APIError as e:
+            status, result = e.status, {"error": str(e)}
+        except Exception:
+            traceback.print_exc()
+            status, result = 500, {"error": "처리하지 못했습니다. 원고를 유지한 채 다시 시도해 주세요."}
+        payload = json.dumps(result, ensure_ascii=False).encode("utf-8")
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.end_headers()
+        self.wfile.write(payload)
+        return True
+
+    def do_GET(self):
+        if not self.editor_request():
+            super().do_GET()
+
+    def do_POST(self):
+        if not self.editor_request():
+            self.send_error(404)
 
     def translate_path(self, path):
         if self.base and path.startswith(self.base):
@@ -987,10 +1045,11 @@ class DevHandler(http.server.SimpleHTTPRequestHandler):
         pass
 
 
-def safe_build(drafts: bool) -> Builder | None:
+def safe_build(drafts: bool, editing: bool = False) -> Builder | None:
     try:
-        builder = Builder(drafts)
-        builder.run()
+        with SITE_LOCK:
+            builder = Builder(drafts, editing=editing)
+            builder.run()
         return builder
     except BuildError as e:
         print(f"\n✗ {e}\n", file=sys.stderr)
@@ -1008,16 +1067,19 @@ def watch(drafts: bool):
     last = snapshot()
     while True:
         time.sleep(0.7)
-        current = snapshot()
-        if current != last:
-            last = current
-            print(time.strftime("[%H:%M:%S] change detected — rebuilding"))
-            safe_build(drafts)
+        with SITE_LOCK:
+            current = snapshot()
+            if current != last:
+                last = current
+                print(time.strftime("[%H:%M:%S] change detected — rebuilding"))
+                safe_build(drafts, editing=True)
 
 
 def serve(port: int, drafts: bool):
-    builder = safe_build(drafts)
+    from editor import EditorAPI
+    builder = safe_build(drafts, editing=True)
     DevHandler.base = builder.base if builder else ""
+    DevHandler.editor = EditorAPI(sys.modules[__name__], drafts)
     DIST.mkdir(exist_ok=True)
     handler = partial(DevHandler, directory=str(DIST))
     for candidate in range(port, port + 20):

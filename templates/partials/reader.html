@@ -17,6 +17,7 @@
     <div class="actionbar">
       <span class="label actionbar-left">{{ caller() if caller else "" }}</span>
       <span class="actionbar-right">
+        {% if editing and doc.edit_url %}<a class="btn btn--ghost reader-edit-link" href="{{ doc.edit_url }}">이 챕터 편집</a>{% endif %}
         {% if contents_url %}<a class="icon-btn" href="{{ contents_url }}" aria-label="Table of contents" title="Contents">{{ icon("list") }}</a>{% endif %}
         <button class="icon-btn" type="button" data-copy-link aria-label="Copy link" title="Copy link">{{ icon("link") }}</button>
       </span>
