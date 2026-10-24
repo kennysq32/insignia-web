@@ -39,8 +39,8 @@
       ? ["alternate_title", "subtitle", "date", "body"]
       : ["author", "genres", "status", "cover", "synopsis"];
     for (const key of keys) result[key] = input(key).value;
-    if (current.kind === "chapter") result.draft = input("draft").checked;
-    else result.subtitle = input("book_subtitle").value;
+    result.draft = input(current.kind === "chapter" ? "draft" : "book_draft").checked;
+    if (current.kind === "book") result.subtitle = input("book_subtitle").value;
     return result;
   }
 
@@ -63,7 +63,7 @@
   function setFields(values) {
     for (const element of form.elements) {
       if (!element.name) continue;
-      const key = element.name === "book_subtitle" ? "subtitle" : element.name;
+      const key = element.name === "book_subtitle" ? "subtitle" : element.name === "book_draft" ? "draft" : element.name;
       if (element.type === "checkbox") element.checked = Boolean(values[key]);
       else element.value = values[key] ?? "";
     }
@@ -74,6 +74,7 @@
     const changed = dirty();
     status.textContent = saving ? "저장하는 중…" : message || (recovery ? "임시 원고 복구 가능" : changed ? "저장하지 않은 변경" : current.new ? "새 초안" : "저장됨");
     status.classList.toggle("is-dirty", changed && !saving);
+    $("[data-delete-document]").disabled = saving || loading || Boolean(recovery);
     saveButton.disabled = saving || loading || Boolean(recovery) || (!changed && !current.new);
     bookSelect.disabled = saving || loading;
     $("[data-new-chapter]").disabled = saving || loading;
@@ -87,7 +88,7 @@
     bookSelect.replaceChildren(...books.map((book) => {
       const option = document.createElement("option");
       option.value = book.id;
-      option.textContent = book.title + (book.subtitle ? ` · ${book.subtitle}` : "");
+      option.textContent = (book.draft ? "[비공개] " : "") + book.title + (book.subtitle ? ` · ${book.subtitle}` : "");
       return option;
     }));
     if (current) bookSelect.value = current.book;
@@ -130,6 +131,7 @@
 
   function display(doc, { checkRecovery = true } = {}) {
     current = doc;
+    $("[data-delete-document]").hidden = Boolean(doc.new);
     recovery = null;
     form.reset();
     form.querySelectorAll("input, textarea").forEach((element) => { element.disabled = false; });
@@ -294,6 +296,15 @@
       event.preventDefault();
       if (!saveButton.disabled) form.requestSubmit();
     }
+  });
+  $("[data-delete-document]").addEventListener("click", async () => {
+    if (!current || current.new || saving || loading) return;
+    if (!window.confirm(`‘${current.fields.title}’을 휴지통으로 이동할까요? 외부 공개가 중단되며, 관리 화면에서 비공개로 복원할 수 있습니다.`)) return;
+    saving = true; updateStatus(); showError();
+    try {
+      await api("content/trash", { kind: current.kind === "book" ? "books" : "chapters", id: current.book + (current.chapter ? "/" + current.chapter : ""), revision: current.revision, action: "trash" });
+      current = null; saving = false; location.assign(base + "/editor/manage/?section=trash");
+    } catch (reason) { showError(reason.message); saving = false; updateStatus(); }
   });
   addEventListener("beforeunload", (event) => {
     if (dirty()) {

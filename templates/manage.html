@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block main %}
+<section class="manager container" data-content-manager lang="ko">
+  <header class="manager-heading"><div><p class="label">INSIGNIA / CONTENT STUDIO</p><h1>콘텐츠 관리</h1><p>어떤 이야기를 공개할지 선택하고, 각 항목을 편집하세요.</p></div><a class="btn btn--ghost" href="/">사이트 보기 ↗</a></header>
+  <p class="manager-error" data-manager-error role="alert" hidden></p>
+  <div class="manager-layout">
+    <nav class="manager-nav panel" aria-label="관리할 콘텐츠">
+      <button type="button" data-kind="settings">공개 설정</button>
+      <button type="button" data-kind="books">Novel <span>책·챕터</span></button>
+      <button type="button" data-kind="gallery">Gallery <span>갤러리 작품</span></button>
+      <button type="button" data-kind="films">Films <span>영상</span></button>
+      <button type="button" data-kind="archive">Archive <span>아카이브 문서</span></button>
+      <button type="button" data-kind="world-wiki">위키 <span>위키 문서</span></button>
+      <button type="button" data-kind="pages">About <span>소개 페이지</span></button>
+      <button type="button" data-kind="trash">휴지통 <span>삭제한 항목 복원</span></button>
+    </nav>
+    <div class="manager-workspace">
+      <header class="manager-section-heading"><div><p class="label" data-manager-count></p><h2 data-manager-title>불러오는 중…</h2></div><button class="btn" type="button" data-manager-new hidden>새 항목</button></header>
+      <div data-manager-settings hidden></div>
+      <div class="manager-items" data-manager-items></div>
+      <form class="manager-form panel" data-manager-form hidden>
+        <div class="manager-form-heading"><h3 data-form-heading>항목 편집</h3><span class="manager-badge" data-publication-badge></span></div>
+        <div class="manager-fields" data-manager-fields></div>
+        <label class="manager-private"><input type="checkbox" name="draft"><span>비공개로 보관<small>외부 방문자의 목록·직접 주소·검색에서 제외합니다.</small></span></label>
+        <p class="manager-inherited" data-section-private hidden>이 메뉴 전체가 비공개입니다. 항목을 공개해도 메뉴를 공개하기 전에는 외부에 표시되지 않습니다.</p>
+        <div class="manager-actions"><span data-manager-status role="status">저장하면 사이트에 반영됩니다.</span><a class="btn btn--ghost" data-novel-editor hidden>챕터 편집 ↗</a><button class="btn btn--ghost manager-delete" type="button" data-manager-delete hidden>휴지통으로 이동</button><button class="btn btn--ghost" type="button" data-manager-preview>미리보기</button><button class="btn" type="submit" data-manager-save>변경 사항 저장</button></div>
+      </form>
+      <section class="manager-preview panel" data-manager-preview-pane hidden><h3>저장 전 미리보기</h3><iframe title="콘텐츠 미리보기" sandbox="allow-same-origin" referrerpolicy="no-referrer" data-manager-preview-frame></iframe></section>
+    </div>
+  </div>
+</section>
+{% endblock %}

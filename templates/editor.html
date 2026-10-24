@@ -8,7 +8,7 @@
       <h1>이야기를 이어 쓰세요.</h1>
       <p class="editor-intro">한 문장씩, 당신의 세계를 완성하는 곳.</p>
     </div>
-    <a class="editor-back label" href="/novel/">책장으로 {{ icon("arrow-right") }}</a>
+    <a class="editor-back label" href="/editor/manage/">콘텐츠 관리</a><a class="editor-back label" href="/novel/">책장으로 {{ icon("arrow-right") }}</a>
   </header>
 
   <p class="editor-notice container" data-editor-error role="alert" hidden></p>
@@ -29,7 +29,7 @@
           <button type="button" data-editor-view="write" aria-pressed="true">원고</button>
           <button type="button" data-editor-view="preview" aria-pressed="false">미리보기</button>
         </div>
-        <div class="editor-save-group">
+        <div class="editor-save-group"><button class="btn btn--ghost" type="button" data-delete-document hidden>휴지통으로 이동</button>
           <span class="editor-save-status" data-save-status role="status" aria-live="polite">불러오는 중</span>
           <button class="btn" type="submit" form="manuscript-form" data-save disabled>저장 <kbd>Ctrl S</kbd></button>
         </div>
@@ -70,6 +70,7 @@
           </div>
 
           <div class="editor-book-fields" data-book-fields hidden>
+            <label class="editor-draft-toggle"><input name="book_draft" type="checkbox"><span>책 전체 비공개<small>모든 챕터와 전자책 다운로드가 외부에 표시되지 않습니다.</small></span></label>
             <div class="editor-detail-row">
               <label>권 / 시리즈 이름<input name="book_subtitle" placeholder="Book One" maxlength="1000"></label>
               <label>작가<input name="author" placeholder="작가 이름" maxlength="1000"></label>

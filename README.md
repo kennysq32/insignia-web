@@ -280,3 +280,38 @@ Validate with `python -m unittest discover -s tests -v`. Tests use temporary man
 and cover real saves, stale revisions, rollback, drafts, private gateway authentication,
 encoded editor paths, HEAD requests and cross-origin rejection. The sibling wiki tests
 cover the shared login flow, one-time code expiry/replay, session migration and logout.
+
+## Content Studio and publication controls
+
+After signing in, open **콘텐츠 관리** at `/editor/manage/`. The studio provides:
+
+- **공개 설정**: public/private switches and labels for Novel, Gallery, Films, Archive, the external wiki, and About. Hidden sections lose their navigation, routes, search results and homepage features. The external wiki remains available to its authenticated owner.
+- **Novel**: create books, edit book information and hide a whole book including chapters and XTC downloads. **챕터 편집** opens the existing manuscript editor, with per-chapter drafts.
+- **Gallery**: add/edit works, images and thumbnails, alt text, media, tags, links and Markdown descriptions. PNG/JPG/WebP/GIF uploads are verified and limited to 20MB.
+- **Films**: add/edit YouTube videos, thumbnails, durations and descriptions. YouTube's own visibility must be managed on YouTube.
+- **Archive / About**: create and edit Markdown documents and their basic metadata while preserving other front matter.
+- **위키**: open the existing wiki editor, which now provides document-level publication settings.
+
+New studio items and new chapters start private. Existing publication choices stay unchanged. Preview content before saving; saves immediately rebuild the public output. Revision checks prevent overwriting another edit. Exact prior bytes are backed up in `.cache/editor/content/`, and failed builds restore the source and preserve the previous served output.
+
+Private items are filtered before rendering, cross-links, feeds, search and XTC generation. Images/uploads not referenced by public output are removed from the served tree; the originals remain in `static/`. Assets shared by another public item remain public. Authenticated previews can load original images through `/__editor/media`; this endpoint and every `/__editor/` API require gateway authentication in production. Unattached uploads are private.
+
+Live section switches are in `content/publication.json`, atomically saved with the content build. The Node gateway mounts `content/` read-only to apply the external wiki switch without restarting. Uploaded files and publication settings are ignored by Git; back up the whole mounted content/static/cache directories. This website's privacy controls do not change material already published in GitHub or other external services. Do not push private manuscripts or their backups to a public repository.
+
+Development `--drafts` remains loopback-only. The production gateway refuses draft-inclusive builds. The management UI and private original files are omitted from a normal static build. Public static deployments cannot use the authenticated editor; deploy the Docker stack for these controls.
+
+### Trash and restore
+
+Existing items have **휴지통으로 이동** in their editor. This covers books, chapters,
+gallery works, films, Archive documents and About pages. The manuscript editor also
+provides this action for the selected book/chapter. Deleted entries disappear from
+public output and regular editing lists; their source, media and backups remain stored.
+Moving a book to the trash hides all its chapters and download files together.
+
+Open **휴지통** in Content Studio to restore an item. Restored items always return
+**private**, so review them before explicitly publishing. For a deleted book, restore
+the book first to manage any chapters separately moved to the trash. The external wiki
+has its own authenticated trash page and document editor action, linked from the studio.
+
+Trash and restore check the current source revision and rebuild atomically; failed
+builds roll back the change. No automatic purge or permanent deletion is implemented.

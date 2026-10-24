@@ -3,7 +3,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends fonts-noto-cjk && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY build.py editor.py ./
+COPY build.py editor.py content_editor.py ./
 COPY templates ./templates
 COPY assets ./assets
 COPY md2xtc ./md2xtc

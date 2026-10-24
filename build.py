@@ -66,7 +66,7 @@ SITE_LOCK = threading.RLock()
 # md2xtc settings for the .xtc download on each book page. `xtc:` in site.yaml overrides them.
 XTC_DEFAULTS = {"font_size": 24, "cover": "on", "chapter_break": "on", "breaks": "on"}
 
-RESERVED_SLUGS = {"novel", "wiki", "gallery", "films", "assets", "images", "search.json"}
+RESERVED_SLUGS = {"novel", "wiki", "gallery", "films", "assets", "images", "search.json", "editor", "__editor", "login", "auth"}
 
 
 class BuildError(Exception):
@@ -396,6 +396,8 @@ class Builder:
         self.load_novel()
         self.load_pages()
         self.load_media()
+        page_slugs = {p["slug"] for p in self.pages}
+        self.site["nav"] = [item for item in self.site["nav"] if item.get("section") != "about" or "about" in page_slugs]
         self.render_markdown()
         self.cross_link()
 
@@ -411,6 +413,7 @@ class Builder:
                 self.build_xtc()
                 self.render_site()
                 self.write_search_index()
+                self.prune_unpublished_assets()
                 replace_dist(self.out)
             finally:
                 shutil.rmtree(self.out, ignore_errors=True)   # only still there if the build failed
@@ -434,15 +437,29 @@ class Builder:
                 site[key] = os.environ[env]
         base = str(site.get("base_url") or "").strip().strip("/")
         site["base_url"] = f"/{base}" if base else ""
+        publication = load_yaml(CONTENT / "publication.json") or {}
+        sections = publication.get("sections", {})
+        labels = publication.get("labels", {})
+        if not isinstance(sections, dict) or any(type(value) is not bool for value in sections.values()):
+            raise BuildError("publication.json: 공개 설정은 true/false여야 합니다.")
+        site["visibility"] = {key: sections.get(key, True) for key in ("novel", "gallery", "films", "wiki", "insignia-wiki", "about")}
+        site["nav"] = [{**item, "label": labels.get(item.get("section")) or item.get("label")} for item in site["nav"]
+                       if self.drafts or site["visibility"].get(item.get("section"), True)]
+        site["home"]["tiles"] = [tile for tile in as_list(site["home"].get("tiles")) if isinstance(tile, dict)
+                                     and (self.drafts or site["visibility"].get(tile.get("section"), True))]
         return site
 
+    def visible(self, section):
+        return self.drafts or self.site["visibility"].get(section, True)
+
     def load_wiki(self):
-        self.articles, self.index = [], {}
+        self.articles, self.index, self.by_slug = [], {}, {}
+        if not self.visible("wiki"): return
         for path in sorted((CONTENT / "wiki").glob("*.md")):
             if path.name.startswith("_"):
                 continue
             meta, body = read_markdown(path)
-            if meta.get("draft") and not self.drafts:
+            if meta.get("deleted") or (meta.get("draft") and not self.drafts):
                 continue
             slug = norm(meta.get("slug") or path.stem)
             title = str(meta.get("title") or path.stem.replace("-", " ").capitalize())
@@ -471,12 +488,13 @@ class Builder:
 
     def load_novel(self):
         self.books, self.chapters = [], []
+        if not self.visible("novel"): return
         root = CONTENT / "novel"
         if not root.exists():
             return
         for folder in sorted(p for p in root.iterdir() if p.is_dir()):
             meta = load_yaml(folder / "_book.yaml") or {}
-            if meta.get("draft") and not self.drafts:
+            if meta.get("deleted") or (meta.get("draft") and not self.drafts):
                 continue
             slug = norm(meta.get("slug") or folder.name)
             book = {
@@ -490,7 +508,7 @@ class Builder:
             chapters = []
             for path in sorted(folder.glob("*.md")):
                 cmeta, body = read_markdown(path)
-                if cmeta.get("draft") and not self.drafts:
+                if cmeta.get("deleted") or (cmeta.get("draft") and not self.drafts):
                     continue
                 m = re.match(r"^(\d+)[-_ .]+(.+)$", path.stem)
                 chapter_title = str(cmeta.get("heading") or (m.group(2) if m else path.stem))
@@ -516,9 +534,10 @@ class Builder:
 
     def load_pages(self):
         self.pages = []
+        if not self.visible("about"): return
         for path in sorted((CONTENT / "pages").glob("*.md")):
             meta, body = read_markdown(path)
-            if meta.get("draft") and not self.drafts:
+            if meta.get("deleted") or (meta.get("draft") and not self.drafts):
                 continue
             slug = norm(meta.get("slug") or path.stem)
             if slug in RESERVED_SLUGS:
@@ -530,13 +549,13 @@ class Builder:
             })
 
     def load_media(self):
-        raw = load_yaml(CONTENT / "gallery.yaml") or []
+        raw = (load_yaml(CONTENT / "gallery.yaml") or []) if self.visible("gallery") else []
         self.gallery = []
         for i, w in enumerate(raw if isinstance(raw, list) else []):
             if not isinstance(w, dict) or not w.get("image"):
                 self.warn(f"content/gallery.yaml: item {i + 1} has no `image` — skipped")
                 continue
-            if w.get("draft") and not self.drafts:
+            if w.get("deleted") or (w.get("draft") and not self.drafts):
                 continue
             wid = str(w.get("id") or f"{i + 1:03d}")
             self.gallery.append({
@@ -546,13 +565,13 @@ class Builder:
                 "tags": [{"name": str(t), "slug": norm(t)} for t in as_list(w.get("tags"))],
                 "entries_raw": as_list(w.get("wiki")), "url": f"/gallery/#w-{wid}",
             })
-        raw = load_yaml(CONTENT / "films.yaml") or []
+        raw = (load_yaml(CONTENT / "films.yaml") or []) if self.visible("films") else []
         self.films = []
         for i, f in enumerate(raw if isinstance(raw, list) else []):
             if not isinstance(f, dict) or not f.get("youtube"):
                 self.warn(f"content/films.yaml: item {i + 1} has no `youtube` id — skipped")
                 continue
-            if f.get("draft") and not self.drafts:
+            if f.get("deleted") or (f.get("draft") and not self.drafts):
                 continue
             vid = youtube_id(f["youtube"])
             duration = f.get("duration", "")
@@ -863,6 +882,7 @@ class Builder:
                            editing=self.editing)
 
         def page(template, url, **ctx):
+            if not self.visible(ctx.get("section")): return
             try:
                 self.write(url, env.get_template(template).render(url=url, **ctx))
             except TemplateError as e:
@@ -885,6 +905,7 @@ class Builder:
              page_title="Novel")
         if self.editing:
             page("editor.html", "/editor/", mode="shell", section="editor", page_title="소설 편집")
+            page("manage.html", "/editor/manage/", mode="shell", section="editor", page_title="콘텐츠 관리")
         for book in self.books:
             page("book.html", book["url"], mode="shell", section="novel", book=book, page_title=book["title"],
                  page_description=truncate(strip_tags(book["synopsis"]), 200), page_image=book["cover"])
@@ -955,6 +976,31 @@ class Builder:
         (self.out / "search.json").write_text(json.dumps(items, ensure_ascii=False, separators=(",", ":")),
                                                encoding="utf-8")
 
+    def prune_unpublished_assets(self):
+        # Only assets referenced by public output are copied to the served tree.
+        # Raw uploads and images belonging only to private items stay in static/.
+        from urllib.parse import unquote
+        referenced = set()
+        pattern = re.compile(r"[\"'(=:\s]((?:" + re.escape(self.base) + r")?/(?:images|uploads)/[^\"'<>\s)?,]+)")
+        def scan(path):
+            for value in pattern.findall(path.read_text(encoding="utf-8", errors="ignore")):
+                if self.base and value.startswith(self.base + "/"): value = value[len(self.base):]
+                referenced.add(unquote(value))
+        for path in self.out.rglob("*"):
+            if path.is_file() and path.suffix in {".html", ".json", ".css", ".js"} and not path.is_relative_to(self.out / "images") and not path.is_relative_to(self.out / "uploads"):
+                scan(path)
+        scanned = set()
+        while referenced - scanned:
+            for value in list(referenced - scanned):
+                scanned.add(value)
+                path = (self.out / value.lstrip("/")).resolve()
+                if path.is_relative_to(self.out.resolve()) and path.is_file() and path.suffix in {".svg", ".css"}: scan(path)
+        for folder in ("images", "uploads"):
+            for path in (self.out / folder).rglob("*"):
+                if path.is_file() and "/" + path.relative_to(self.out).as_posix() not in referenced: path.unlink()
+            for path in sorted((self.out / folder).rglob("*"), key=lambda p: len(p.parts), reverse=True):
+                if path.is_dir() and not any(path.iterdir()): path.rmdir()
+
     def report(self, seconds: float):
         print(f"✓ Built {len(self.articles)} archive entries, {len(self.chapters)} chapters, "
               f"{len(self.gallery)} works, {len(self.films)} films, {len(self.pages)} pages "
@@ -990,7 +1036,8 @@ class DevHandler(http.server.SimpleHTTPRequestHandler):
                     length = int(self.headers.get("Content-Length", "0"))
                 except ValueError:
                     raise APIError(400, "요청 크기가 올바르지 않습니다.") from None
-                if not 0 < length <= 2_000_000:
+                limit = 28_000_000 if path == "/__editor/api/content/upload" else 2_000_000
+                if not 0 < length <= limit:
                     raise APIError(413, "원고는 2MB 이하로 저장해 주세요.")
                 try:
                     body = json.loads(self.rfile.read(length))
@@ -998,7 +1045,11 @@ class DevHandler(http.server.SimpleHTTPRequestHandler):
                     raise APIError(400, "요청 내용을 읽을 수 없습니다.") from None
                 if not isinstance(body, dict):
                     raise APIError(400, "요청 내용이 올바르지 않습니다.")
-            result = self.editor.handle(self.command, path, urlsplit(self.path).query, body)
+            if path.startswith("/__editor/api/content/"):
+                from content_editor import ContentEditor
+                result = ContentEditor(sys.modules[__name__]).handle(self.command, path.rsplit("/", 1)[-1], urlsplit(self.path).query, body)
+            else:
+                result = self.editor.handle(self.command, path, urlsplit(self.path).query, body)
             status = 200
         except APIError as e:
             status, result = e.status, {"error": str(e)}
@@ -1036,6 +1087,17 @@ class DevHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
         if not self.check_editor_access():
+            return
+        if urlsplit(self.path).path == self.base + "/__editor/media":
+            from content_editor import ContentEditor
+            from urllib.parse import parse_qs
+            from editor import APIError
+            try:
+                path, mime = ContentEditor(sys.modules[__name__]).media_file(parse_qs(urlsplit(self.path).query).get("path", [""])[0])
+                body = path.read_bytes()
+                self.send_response(200); self.send_header("Content-Type", mime); self.send_header("Content-Length", str(len(body)))
+                self.send_header("X-Content-Type-Options", "nosniff"); self.end_headers(); self.wfile.write(body)
+            except APIError as error: self.send_error(error.status)
             return
         if not self.editor_request():
             super().do_GET()
@@ -1105,6 +1167,8 @@ def serve(port: int, drafts: bool):
     token_file = os.environ.get("INSIGNIA_PROXY_TOKEN_FILE")
     if bind not in {"127.0.0.1", "localhost"} and not token_file:
         sys.exit("External binding requires the authenticated private gateway")
+    if token_file and drafts:
+        sys.exit("Drafts cannot be served on the production gateway")
     if token_file and not re.fullmatch(r"[A-Za-z0-9_-]{43,}", Path(token_file).read_text().strip()):
         sys.exit("A private gateway token is required")
     builder = safe_build(drafts, editing=True)
