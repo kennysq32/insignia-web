@@ -29,28 +29,6 @@
 </section>
 {% endif %}
 
-{% if tiles %}
-<section class="section container">
-  <header class="section-head">
-    <p class="label">( 01 — {{ tiles|length|pad }} )</p>
-    <h2 class="section-title">{{ site.home.tiles_title or "Enter the world" }}</h2>
-  </header>
-  <div class="tiles">
-    {% for t in tiles %}
-    <a class="tile" href="{{ t.url }}">
-      {% if t.image %}<img class="tile-art" src="{{ t.image }}" alt="" loading="lazy">{% endif %}
-      <span class="tile-card frost">
-        <span class="card-copy">
-          <span class="dot-label">{{ t.name|lower }} ( {{ t.count }} )</span>
-          <span class="headline">{{ t.headline }}</span>
-        </span>
-        <span class="btn btn--block">{{ t.cta or "Open" }}</span>
-      </span>
-    </a>
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
 
 <section class="section container">
   <div class="split">
