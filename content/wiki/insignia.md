@@ -1,23 +1,29 @@
 ---
 title: Insignia
 description: Glyphs of light that bind a name to a person or place
-aliases: [glyph, light-glyph]
-categories: [Concepts]
+aliases:
+- glyph
+- light-glyph
+categories:
+- Concepts
 navbox: world
 date: 2026-09-20
-hatnote: "This entry is about the light-glyphs. For the project itself, see [About](/about/)."
+hatnote: This entry is about the light-glyphs. For the project itself, see [About](/about/).
 infobox:
   image: /images/art/sigil.svg
-  caption: A reconstructed insignia on the standard seven-by-seven grid, after guild records
+  caption: A reconstructed insignia on the standard seven-by-seven grid, after guild
+    records
   rows:
-    - header: Overview
-    - Type: Light-glyph
-    - Grid: 7 × 7 points
-    - Carried by: "[[Pylon]]s"
-    - Read by: "[[Lantern Guild]]"
-    - header: History
-    - First recorded: c. 900 BD
-    - Last broadcast: "[[The Dimming]], 0 PD"
+  - header: Overview
+  - Type: Light-glyph
+  - Grid: 7 × 7 points
+  - Carried by: '[[Pylon]]s'
+  - Read by: '[[Lantern Guild]]'
+  - header: History
+  - First recorded: c. 900 BD
+  - Last broadcast: '[[The Dimming]], 0 PD'
+deleted: true
+deleted_at: '2026-10-24T16:02:11.497941'
 ---
 An **insignia** is a glyph of light, broadcast from a [[pylon]], that binds a name to the person or place that receives it. For most of recorded history, to bear an insignia was to be *remembered*: property, kinship and debt were kept in light rather than in ink.[^book] Since [[the Dimming]] no new insignia have been broadcast, and the surviving ones are slowly fading from the people who carry them.
 

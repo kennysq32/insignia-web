@@ -1,22 +1,25 @@
 ---
 title: Halden
 description: Harbour city of the seven lamps
-categories: [Places]
+categories:
+- Places
 navbox: world
 date: 2026-09-08
 infobox:
   subtitle: City of the Seven Lamps
   image: /images/art/halden-map.svg
   caption: Survey of Halden and its pylons (the seventh lamp circled)
-  color: "#d9e6d2"
+  color: '#d9e6d2'
   rows:
-    - header: Geography
-    - Type: Harbour city
-    - Pylons: 7 (see [[Pylon#The seventh lamp|the seventh lamp]])
-    - header: Society
-    - Population: c. 40,000 (212 PD)
-    - Institutions: "[[Lantern Guild]]"
-    - Notable people: "[[Ines Varo]]"
+  - header: Geography
+  - Type: Harbour city
+  - Pylons: 7 (see [[Pylon#The seventh lamp|the seventh lamp]])
+  - header: Society
+  - Population: c. 40,000 (212 PD)
+  - Institutions: '[[Lantern Guild]]'
+  - Notable people: '[[Ines Varo]]'
+deleted: true
+deleted_at: '2026-10-24T16:01:54.372743'
 ---
 **Halden** is a harbour city on a crescent-shaped bay, built around a hill that carries seven [[pylon]]s. Before [[the Dimming]] it was the most "lit" city of its region: more [[insignia]] were broadcast from its lamps than from any other group of pylons on record.
 

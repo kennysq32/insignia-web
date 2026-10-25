@@ -1,24 +1,31 @@
 ---
 title: Pylon
 description: Lattice towers that once broadcast insignia
-aliases: [pylons, lamp, lamps]
-categories: [Technology, Places]
+aliases:
+- pylons
+- lamp
+- lamps
+categories:
+- Technology
+- Places
 navbox: world
 date: 2026-09-18
 infobox:
   image: /images/art/pylon.svg
   caption: Elevation of the Seventh Lamp of Halden
-  color: "#e8e8e8"
+  color: '#e8e8e8'
   rows:
-    - header: Pylon
-    - Also called: Lamp, tower
-    - Height: 40–120 m
-    - Known sites: 49 (7 in [[Halden]])
-    - Active: 1 (contested)
-    - header: Operation
-    - Broadcasts: "[[Insignia]]"
-    - Keepers: "[[Lantern Guild]]"
-    - Fell silent: "[[The Dimming]]"
+  - header: Pylon
+  - Also called: Lamp, tower
+  - Height: 40–120 m
+  - Known sites: 49 (7 in [[Halden]])
+  - Active: 1 (contested)
+  - header: Operation
+  - Broadcasts: '[[Insignia]]'
+  - Keepers: '[[Lantern Guild]]'
+  - Fell silent: '[[The Dimming]]'
+deleted: true
+deleted_at: '2026-10-24T16:02:03.964128'
 ---
 A **pylon** (often simply a *lamp*) is a lattice tower of dark metal that once broadcast [[insignia]] across the land around it. Pylons stand in loose groups of seven. Nobody knows who built them, and no new pylon has been raised in recorded history.
 

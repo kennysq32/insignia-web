@@ -12,6 +12,5 @@ tools/
 .venv/
 .env
 
-# Uploaded media and live publication choices stay local; may include private work.
+# Uploaded media stay local; may include private work.
 /static/uploads/
-/content/publication.json

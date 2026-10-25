@@ -1,9 +1,11 @@
-# One folder per book. Chapters are the .md files in this folder, in file-name order.
 title: 제목 미정
 subtitle: Book Two
 author: Mirage Concept Group (KennySq)
 cover: /images/books/untitled-02.svg
 status: Ongoing
 order: 2
-synopsis: |
-    아름다움과 첨단 기술의 상징, 꿈의 도시 산타레이나. 누구도 알지 못하는 사이 위험한 물건들이 이 도시를 지나치고 있습니다 .
+synopsis: '아름다움과 첨단 기술의 상징, 꿈의 도시 산타레이나. 누구도 알지 못하는 사이 위험한 물건들이 이 도시를 지나치고 있습니다 .
+
+  '
+draft: false
+genres: []

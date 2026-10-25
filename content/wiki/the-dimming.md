@@ -2,22 +2,26 @@
 title: The Dimming
 description: The night every pylon went dark
 sort: Dimming, The
-aliases: [Dimming]
-categories: [Events]
+aliases:
+- Dimming
+categories:
+- Events
 navbox: world
 date: 2026-09-12
 infobox:
   image: /images/art/dimming.svg
   caption: Guild print of the Dimming
-  color: "#f2d7d5"
+  color: '#f2d7d5'
   rows:
-    - header: Event
-    - Date: 0 PD (the first night of the year)
-    - Location: Every known pylon
-    - Cause: Unknown
-    - header: Consequences
-    - Outcome: End of all broadcasts
-    - Calendar: Years counted BD / PD from this night
+  - header: Event
+  - Date: 0 PD (the first night of the year)
+  - Location: Every known pylon
+  - Cause: Unknown
+  - header: Consequences
+  - Outcome: End of all broadcasts
+  - Calendar: Years counted BD / PD from this night
+deleted: true
+deleted_at: '2026-10-24T16:02:21.295475'
 ---
 **The Dimming** was the night on which every known [[pylon]] stopped broadcasting. It is the reference point of the modern calendar: years before it are counted *BD* ("before the Dimming") and years after it *PD* ("past the Dimming").
 
