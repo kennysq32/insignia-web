@@ -8,3 +8,9 @@ tools/
 .claude/settings.local.json
 .obsidian/
 .cache/
+
+.venv/
+.env
+
+# Uploaded media stay local; may include private work.
+/static/uploads/

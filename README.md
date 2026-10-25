@@ -87,9 +87,8 @@ Run `python build.py serve`, then open <http://localhost:8000/editor/> or select
   manuscript, choose **이어 쓰기** to recover them. This does not replace saving.
   If the source was edited elsewhere, saving stops to avoid overwriting it.
 
-The editor and its write API are available only on the loopback development
-server. A normal `python build.py` static build omits the editing page and links.
-Published static hosting remains a reader-facing site.
+The development editor binds to loopback by default. Production uses the shared
+wiki authentication gateway described below. Static builds exclude the editor.
 
 ### Books
 
@@ -238,3 +237,81 @@ and the output folder is `dist`.
   server at sign-in; rebuild `dist` after changing the site.
 - **Netlify / Cloudflare Pages** — build command `pip install -r requirements.txt && python3 build.py`,
   output directory `dist`.
+
+
+## Production: wiki login and Docker
+
+The public site is <https://insignia.mastercable-cloud.site>. **위키** in the desktop,
+mobile and footer navigation opens <https://insignia-wiki.mastercable-cloud.site>.
+Reading remains public. The novel editor, unpublished manuscript API, previews and
+saves require the same Cloudflare email verification and password as wiki editing.
+Login starts at the wiki; a successful login there also establishes the novel session.
+An existing wiki login returns to the novel editor without another password prompt.
+The 30-day remember setting and logout apply to both sites.
+
+Run the production stack from the sibling `insignia-wiki` repository's `compose.yaml`.
+It builds this Dockerfile, mounts this repository at `/workspace`, and connects the
+Python server to the Node authentication gateway over a private Docker network.
+No host port is published. Both containers receive the same random gateway token
+as a Docker secret; never commit or print this token. The Python server requires it
+for editor HTML and manuscript requests, even from loopback. External write origins
+and sessions are verified by the gateway before requests reach Python.
+
+`INSIGNIA_DATA_ROOT` selects the writable content/static/dist/cache directory;
+code, templates and assets are loaded from the image. `INSIGNIA_BIND` defaults to
+`127.0.0.1`; an external binding requires `INSIGNIA_PROXY_TOKEN_FILE`. The production
+container sets `INSIGNIA_BIND=0.0.0.0` behind the private gateway. A failed initial
+production build aborts startup. Do not expose this Python service directly or run a
+second editor against the same content directory.
+
+The wiki owns the only password database. A short-lived, single-use handoff bound
+to the browser and exact novel origin establishes a separate host-only session cookie.
+No password or Cloudflare identity token is sent to Python. Both domains route through
+`http://insignia-wiki:4173` on the existing Cloudflare Docker tunnel; the wiki login
+paths retain their Cloudflare Access policy. See the wiki README for account management,
+secret generation, configuration and rollback.
+
+The three Ground Zero Markdown chapters and the cafe illustration were synchronized
+from the already-public October 12 deployment before switching hosting. This preserves
+the published prose and formatting instead of replacing it with older GitHub chapters.
+Editing backups remain in `.cache/editor/` and are never served publicly.
+
+Validate with `python -m unittest discover -s tests -v`. Tests use temporary manuscripts
+and cover real saves, stale revisions, rollback, drafts, private gateway authentication,
+encoded editor paths, HEAD requests and cross-origin rejection. The sibling wiki tests
+cover the shared login flow, one-time code expiry/replay, session migration and logout.
+
+## Content Studio and publication controls
+
+After signing in, open **콘텐츠 관리** at `/editor/manage/`. The studio provides:
+
+- **공개 설정**: public/private switches and labels for Novel, Gallery, Films, Archive, the external wiki, and About. Hidden sections lose their navigation, routes, search results and homepage features. The external wiki remains available to its authenticated owner.
+- **Novel**: create books, edit book information and hide a whole book including chapters and XTC downloads. **챕터 편집** opens the existing manuscript editor, with per-chapter drafts.
+- **Gallery**: add/edit works, images and thumbnails, alt text, media, tags, links and Markdown descriptions. PNG/JPG/WebP/GIF uploads are verified and limited to 20MB.
+- **Films**: add/edit YouTube videos, thumbnails, durations and descriptions. YouTube's own visibility must be managed on YouTube.
+- **Archive / About**: create and edit Markdown documents and their basic metadata while preserving other front matter.
+- **위키**: open the existing wiki editor, which now provides document-level publication settings.
+
+New studio items and new chapters start private. Existing publication choices stay unchanged. Preview content before saving; saves immediately rebuild the public output. Revision checks prevent overwriting another edit. Exact prior bytes are backed up in `.cache/editor/content/`, and failed builds restore the source and preserve the previous served output.
+
+Private items are filtered before rendering, cross-links, feeds, search and XTC generation. Images/uploads not referenced by public output are removed from the served tree; the originals remain in `static/`. Assets shared by another public item remain public. Authenticated previews can load original images through `/__editor/media`; this endpoint and every `/__editor/` API require gateway authentication in production. Unattached uploads are private.
+
+Live section switches are in `content/publication.json`, atomically saved with the content build. The Node gateway mounts `content/` read-only to apply the external wiki switch without restarting. Uploaded files are ignored by Git; back up the whole mounted content/static/cache directories. The tracked `content/publication.json` stores menu labels and public/private switches so fresh checkouts preserve the intended public scope; saves in the studio modify that file and should be reviewed before committing. Credentials and session data remain local to the authentication gateway. This website's privacy controls do not change material already published in GitHub or other external services. Do not push private manuscripts or their backups to a public repository.
+
+Development `--drafts` remains loopback-only. The production gateway refuses draft-inclusive builds. The management UI and private original files are omitted from a normal static build. Public static deployments cannot use the authenticated editor; deploy the Docker stack for these controls.
+
+### Trash and restore
+
+Existing items have **휴지통으로 이동** in their editor. This covers books, chapters,
+gallery works, films, Archive documents and About pages. The manuscript editor also
+provides this action for the selected book/chapter. Deleted entries disappear from
+public output and regular editing lists; their source, media and backups remain stored.
+Moving a book to the trash hides all its chapters and download files together.
+
+Open **휴지통** in Content Studio to restore an item. Restored items always return
+**private**, so review them before explicitly publishing. For a deleted book, restore
+the book first to manage any chapters separately moved to the trash. The external wiki
+has its own authenticated trash page and document editor action, linked from the studio.
+
+Trash and restore check the current source revision and rebuild atomically; failed
+builds roll back the change. No automatic purge or permanent deletion is implemented.

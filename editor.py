@@ -1,8 +1,10 @@
-"""Local manuscript editing API, available only through build.py serve."""
+"""Manuscript editor: private authenticated gateway in production, loopback in development."""
 
 from __future__ import annotations
 
 import hashlib
+import hmac
+from pathlib import Path
 import os
 import re
 import tempfile
@@ -26,7 +28,13 @@ class EditorAPI:
     @staticmethod
     def check_request(headers, port, method):
         host = headers.get("Host", "")
-        if host not in {f"localhost:{port}", f"127.0.0.1:{port}"}:
+        token_file = os.environ.get("INSIGNIA_PROXY_TOKEN_FILE")
+        if token_file:
+            expected = Path(token_file).read_text().strip()
+            actual = headers.get("X-Insignia-Proxy-Token", "")
+            if len(expected) < 43 or not hmac.compare_digest(actual, expected):
+                raise APIError(403, "인증된 편집 서버에서 접속해 주세요.")
+        elif host not in {f"localhost:{port}", f"127.0.0.1:{port}"}:
             raise APIError(403, "로컬 주소에서 편집기를 열어 주세요.")
         origin = headers.get("Origin")
         if origin and origin != f"http://{host}":
@@ -61,7 +69,7 @@ class EditorAPI:
         builder = self.catalog()
         return [{
             "id": b["path"].name, "title": b["title"], "subtitle": str(b["subtitle"] or ""),
-            "read_url": None if b["meta"].get("draft") else builder.u(b["url"]),
+            "read_url": None if b["meta"].get("draft") else builder.u(b["url"]), "draft": bool(b["meta"].get("draft")),
             "chapters": [{"id": c["path"].name, "title": c["title"],
                           "draft": bool(c["meta"].get("draft")), "number": c["number"]}
                          for c in b["chapters"]],
@@ -74,6 +82,7 @@ class EditorAPI:
         folder = (root / book).resolve()
         if folder.parent != root or not folder.is_dir():
             raise APIError(404, "책을 찾을 수 없습니다.")
+        if (self.site.load_yaml(folder / "_book.yaml") or {}).get("deleted"): raise APIError(404, "휴지통에 있는 책입니다.")
         return folder
 
     def path(self, book, chapter):
@@ -88,6 +97,7 @@ class EditorAPI:
         path = (folder / name).resolve()
         if path.parent != folder:
             raise APIError(400, "원고 폴더 안의 파일만 편집할 수 있습니다.")
+        if chapter is not None and path.is_file() and self.site.read_markdown(path)[0].get("deleted"): raise APIError(404, "휴지통에 있는 챕터입니다.")
         return path
 
     @staticmethod
@@ -109,6 +119,7 @@ class EditorAPI:
                       ("title", "subtitle", "author", "cover", "status", "synopsis")}
             fields["title"] = record["title"]
             fields["genres"] = ", ".join(record["genres"])
+            fields["draft"] = bool(meta.get("draft"))
             url = None if meta.get("draft") else builder.u(record["url"])
         else:
             ch = next((c for c in record["chapters"] if c["path"].name == chapter), None)
@@ -197,6 +208,9 @@ class EditorAPI:
             text = "---\n" + yaml.safe_dump(meta, allow_unicode=True, sort_keys=False) + "---\n" + body
         else:
             meta["title"] = title
+            if "draft" in fields:
+                if type(fields["draft"]) is not bool: raise APIError(400, "공개 여부를 확인해 주세요.")
+                meta["draft"] = fields["draft"]
             for key in ("subtitle", "author", "cover", "status", "synopsis"):
                 meta[key] = self.text(fields, key, limit=100_000 if key == "synopsis" else 1000)
             meta["genres"] = [g.strip() for g in self.text(fields, "genres").split(",") if g.strip()]

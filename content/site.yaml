@@ -21,6 +21,7 @@ nav:
   - { label: Gallery, url: /gallery/, section: gallery }
   - { label: Films,   url: /films/,   section: films }
   - { label: Archive, url: /wiki/,    section: wiki }
+  - { label: 위키, url: "https://insignia-wiki.mastercable-cloud.site/", section: insignia-wiki }
   - { label: About,   url: /about/,   section: about }
 
 # ── Home page ────────────────────────────────────────────────────────────────

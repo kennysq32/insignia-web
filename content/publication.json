@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "novel": true,
+    "gallery": false,
+    "films": true,
+    "wiki": false,
+    "insignia-wiki": true,
+    "about": true
+  },
+  "labels": {
+    "novel": "Novel",
+    "gallery": "Gallery",
+    "films": "Films",
+    "wiki": "Archive",
+    "insignia-wiki": "위키",
+    "about": "About"
+  }
+}
