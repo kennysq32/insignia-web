@@ -906,6 +906,7 @@ class Builder:
         if self.editing:
             page("editor.html", "/editor/", mode="shell", section="editor", page_title="소설 편집")
             page("manage.html", "/editor/manage/", mode="shell", section="editor", page_title="콘텐츠 관리")
+            page("timeline.html", "/editor/timeline/", mode="shell", section="editor", page_title="타임라인")
         for book in self.books:
             page("book.html", book["url"], mode="shell", section="novel", book=book, page_title=book["title"],
                  page_description=truncate(strip_tags(book["synopsis"]), 200), page_image=book["cover"])
@@ -1045,7 +1046,10 @@ class DevHandler(http.server.SimpleHTTPRequestHandler):
                     raise APIError(400, "요청 내용을 읽을 수 없습니다.") from None
                 if not isinstance(body, dict):
                     raise APIError(400, "요청 내용이 올바르지 않습니다.")
-            if path.startswith("/__editor/api/content/"):
+            if path == "/__editor/api/timeline" or path.startswith("/__editor/api/timeline/"):
+                from timeline import TimelineAPI
+                result = TimelineAPI(sys.modules[__name__]).handle(self.command, path, body)
+            elif path.startswith("/__editor/api/content/"):
                 from content_editor import ContentEditor
                 result = ContentEditor(sys.modules[__name__]).handle(self.command, path.rsplit("/", 1)[-1], urlsplit(self.path).query, body)
             else:

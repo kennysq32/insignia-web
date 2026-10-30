@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "partials/icons.html" import icon %}
+{% block body_class %}timeline-page{% endblock %}
+{% block main %}
+<section class="timeline-studio" data-timeline lang="ko" aria-label="세계관 타임라인 에디터">
+  <header class="tl-header">
+    <a class="tl-brand" href="/" aria-label="INSIGNIA 홈">INSIGNIA<span>STUDIO</span></a>
+    <span class="tl-header-divider"></span>
+    <a class="tl-back" href="/editor/manage/">{{ icon('arrow-left') }} 콘텐츠 관리</a>
+    <span class="tl-header-current">타임라인</span>
+    <div class="tl-header-end"><span class="tl-private"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" aria-hidden="true"><rect x="3.5" y="7" width="9" height="7" rx="1.5"/><path d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0V7"/></svg>비공개 작업 공간</span><button class="tl-icon-button" type="button" data-theme-toggle aria-label="밝은 테마·어두운 테마 전환">{{ icon('theme') }}</button></div>
+  </header>
+
+  <div class="tl-workspace">
+    <aside class="tl-sidebar" aria-label="타임라인 탐색">
+      <div class="tl-project"><span class="tl-eyebrow">WORLD BUILDING</span><h1 data-board-name>세계관 타임라인</h1><button class="tl-text-button" type="button" data-rename disabled>이름 변경 ↗</button></div>
+      <button class="tl-primary tl-add" type="button" data-add disabled><span aria-hidden="true">＋</span> 사건 추가 <kbd>N</kbd></button>
+      <label class="tl-search">{{ icon('search') }}<input type="search" data-event-search placeholder="사건 · 연도 검색" aria-label="사건 또는 연도 검색" maxlength="160"></label>
+      <div class="tl-nav-heading"><span class="tl-eyebrow">연도 탐색</span><span data-year-count>00</span></div>
+      <nav class="tl-years" data-year-nav aria-label="연도 바로가기"><p class="tl-nav-empty">연도를 불러오는 중…</p></nav>
+      <div class="tl-sidebar-bottom"><span class="tl-eyebrow">CHRONOLOGY, SIMPLIFIED.</span><p>흩어진 사건을 하나의 흐름으로.</p><span class="tl-order-note"><span aria-hidden="true">↗</span> 날짜순 자동 정렬</span></div>
+    </aside>
+
+    <div class="tl-center">
+      <div class="tl-toolbar">
+        <div class="tl-view-label">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><path d="M12 15h6m-3-3v6"/></svg>
+          <strong>타임라인</strong>
+          <div class="tl-view-switch" role="group" aria-label="타임라인 보기 방향">
+            <button type="button" data-layout="horizontal" aria-label="가로 보기" aria-pressed="true"><span aria-hidden="true">↔</span> 가로</button>
+            <button type="button" data-layout="vertical" aria-label="세로 보기" aria-pressed="false"><span aria-hidden="true">↕</span> 세로</button>
+          </div>
+          <span data-event-count>0개의 사건</span>
+        </div>
+        <div class="tl-toolbar-end"><span class="tl-save-state" data-save-state role="status">연결하는 중…</span><button class="tl-icon-button tl-mobile-add" type="button" data-mobile-add aria-label="새 사건 추가" disabled>＋</button><button class="tl-icon-button" type="button" data-toggle-inspector aria-label="사건 편집 패널 열기·닫기" aria-expanded="true">{{ icon('list') }}</button></div>
+      </div>
+      <div class="tl-alert" data-timeline-error role="alert" hidden><span data-error-message></span><button type="button" data-reload>다시 불러오기</button><a href="/login/?returnTo=%2Feditor%2Ftimeline%2F" data-login hidden>로그인</a></div>
+      <div class="tl-viewport" data-viewport tabindex="0" role="region" aria-label="타임라인 캔버스. 빈 공간을 드래그해 이동하고 휠로 확대·축소합니다.">
+        <div class="tl-world" data-world></div>
+        <div class="tl-empty-canvas" data-empty hidden><div class="tl-empty-mark" aria-hidden="true"><span></span><i></i><span></span><i></i><span></span></div><span class="tl-eyebrow">YOUR WORLD STARTS HERE</span><h2>이야기의 첫 순간을 기록하세요.</h2><p>시점을 입력하면 사건이 제자리를 찾습니다.<br>하나씩 더해, 세계의 흐름을 완성해 보세요.</p><button type="button" class="tl-primary" data-empty-add>첫 사건 추가 <span aria-hidden="true">＋</span></button></div>
+        <div class="tl-no-results" data-no-results hidden><strong>검색 결과가 없습니다.</strong><button type="button" class="tl-text-button" data-clear-search>검색 초기화</button></div>
+        <div class="tl-canvas-caption" aria-hidden="true"><span class="tl-eyebrow">INSIGNIA / CHRONOLOGY</span><span data-visible-year></span></div>
+        <div class="tl-canvas-controls"><button class="tl-icon-button" type="button" data-zoom-out aria-label="축소">−</button><button class="tl-zoom-value" type="button" data-zoom-reset aria-label="100퍼센트 배율로 복원">100%</button><button class="tl-icon-button" type="button" data-zoom-in aria-label="확대">＋</button><span></span><button class="tl-fit" type="button" data-fit title="전체 보기 (F)"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" aria-hidden="true"><path d="M6 2H2v4m10-4h4v4M2 12v4h4m10-4v4h-4"/></svg>전체 보기</button></div>
+      </div>
+      <footer class="tl-statusbar"><span><i></i> 날짜순 자동 배치</span><span class="tl-canvas-help">드래그로 이동 <b>·</b> 휠로 확대/축소 <b>·</b> <kbd>F</kbd> 전체 보기</span><span data-timeline-range>—</span></footer>
+    </div>
+
+    <aside class="tl-inspector" data-inspector aria-label="사건 편집">
+      <div class="tl-inspector-heading"><div><span class="tl-eyebrow" data-form-eyebrow>NEW EVENT</span><h2 data-form-title>사건 추가</h2></div><span class="tl-form-symbol" aria-hidden="true">↗</span></div>
+      <form data-event-form>
+        <fieldset data-form-fields disabled>
+          <label class="tl-field">사건 제목 <span class="tl-required">*</span><input type="text" name="title" maxlength="160" placeholder="어떤 일이 일어났나요?" required autocomplete="off"></label>
+          <div class="tl-date-heading"><span>시점 <span class="tl-required">*</span></span><span>월·일은 미정으로 둘 수 있습니다</span></div>
+          <div class="tl-date-fields"><label>연도<input type="number" name="year" placeholder="예: 2140" min="-999999" max="999999" step="1" required></label><label>월<select name="month"><option value="">미정</option>{% for month in range(1, 13) %}<option value="{{ month }}">{{ month }}월</option>{% endfor %}</select></label><label>일<input type="number" name="day" placeholder="미정" min="1" max="31" step="1"></label></div>
+          <p class="tl-date-note">미정인 월·일은 해당 연도·월의 맨 앞에 배치됩니다.</p>
+          <label class="tl-field">시점 표기 <span class="tl-optional">선택</span><input type="text" name="date_label" maxlength="80" placeholder="예: 1990년대 초, 2010 이후"><small class="tl-date-label-note">대략적인 시점을 그대로 표기합니다. 정렬은 위 연도를 사용합니다.</small></label>
+          <label class="tl-field tl-description-label">설명 <span class="tl-optional">선택</span><textarea name="description" rows="6" maxlength="6000" placeholder="배경, 등장인물, 그 이후의 변화…"></textarea></label>
+          <div class="tl-field">사건 색상</div>
+          <div class="tl-color-options" role="group" aria-label="사건 색상"><label data-color="red"><input type="radio" name="color" value="red" aria-label="붉은색" checked><span></span></label><label data-color="blue"><input type="radio" name="color" value="blue" aria-label="파란색"><span></span></label><label data-color="green"><input type="radio" name="color" value="green" aria-label="초록색"><span></span></label><label data-color="gray"><input type="radio" name="color" value="gray" aria-label="회색"><span></span></label></div>
+          <div class="tl-form-actions"><button class="tl-primary" type="submit" data-save-event>사건 저장 <span aria-hidden="true">↗</span></button><button type="button" class="tl-delete" data-delete-event hidden>사건 삭제</button></div>
+        </fieldset>
+      </form>
+      <p class="tl-event-source" data-event-source hidden><a target="_blank" rel="noopener noreferrer" data-source-link>원본 연표에서 보기 ↗</a></p>
+      <div class="tl-inspector-tip"><span aria-hidden="true">✳</span><p>정렬은 타임라인에 맡기세요.<br>날짜를 바꾸면 사건도 함께 이동합니다.</p></div>
+    </aside>
+  </div>
+</section>
+{% endblock %}

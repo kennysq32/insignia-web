@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="/assets/site.css?v={{ asset_version }}">
 <script src="/assets/site.js?v={{ asset_version }}" defer></script>
 </head>
-<body class="mode-{{ mode or 'shell' }}">
+<body class="mode-{{ mode or 'shell' }} {% block body_class %}{% endblock %}">
 <a class="skip" href="#main">Skip to content</a>
 {% include "partials/header.html" %}
 <main id="main">
