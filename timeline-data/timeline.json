@@ -1,0 +1,226 @@
+{
+  "schema_version": 1,
+  "title": "세계관 타임라인",
+  "events": [
+    {
+      "id": "wiki-event-2",
+      "year": 1965,
+      "month": 2,
+      "day": null,
+      "title": "베아트리체 콜린스와 아델린 볼터가 비행기 제작 구상을 나눈다.",
+      "description": "관련 문서: 콜린스 앤 볼터",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-2"
+    },
+    {
+      "id": "wiki-event-456fb5e7-a9b4-4ea1-a82f-09fe1e5bf66b",
+      "year": 1965,
+      "month": 3,
+      "day": null,
+      "title": "신디 레이번의 첫 파병",
+      "description": "",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-456fb5e7-a9b4-4ea1-a82f-09fe1e5bf66b"
+    },
+    {
+      "id": "wiki-event-3",
+      "year": 1966,
+      "month": 5,
+      "day": null,
+      "title": "콜린스 앤 볼터 창립.",
+      "description": "관련 문서: 콜린스 앤 볼터",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-3"
+    },
+    {
+      "id": "wiki-event-4",
+      "year": 1969,
+      "month": null,
+      "day": null,
+      "title": "뉴아크 일렉트릭이 콜린스 앤 볼터의 실험적 엔진을 구매한다.",
+      "description": "관련 문서: 뉴아크 일렉트릭",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-4"
+    },
+    {
+      "id": "wiki-event-5",
+      "year": 1971,
+      "month": null,
+      "day": null,
+      "title": "PL-71의 마하 3.2 비행 성공.",
+      "description": "관련 문서: 콜린스 앤 볼터",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-5"
+    },
+    {
+      "id": "wiki-event-6",
+      "year": 1972,
+      "month": null,
+      "day": null,
+      "title": "국방부가 콜린스 앤 볼터에 정부 계약을 제안한다.",
+      "description": "관련 문서: 콜린스 앤 볼터",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-6"
+    },
+    {
+      "id": "wiki-event-7",
+      "year": 1981,
+      "month": 2,
+      "day": 16,
+      "title": "다이앤 크레이머 출생.",
+      "description": "관련 문서: 다이앤 크레이머",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-7"
+    },
+    {
+      "id": "wiki-event-8",
+      "year": 1990,
+      "month": null,
+      "day": null,
+      "title": "이스크리아 사회주의 연방 공화국 붕괴.",
+      "description": "관련 문서: 오르바",
+      "color": "red",
+      "date_label": "1990년대 초",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-8"
+    },
+    {
+      "id": "wiki-event-9",
+      "year": 1992,
+      "month": 5,
+      "day": 3,
+      "title": "엘리 머레이 출생.",
+      "description": "관련 문서: 엘리 머레이",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-9"
+    },
+    {
+      "id": "wiki-event-10",
+      "year": 1994,
+      "month": 7,
+      "day": 11,
+      "title": "옥타비아 콜린스 출생.",
+      "description": "관련 문서: 옥타비아 콜린스",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-10"
+    },
+    {
+      "id": "wiki-event-11",
+      "year": 1995,
+      "month": null,
+      "day": null,
+      "title": "인터넷 대중 공개. 프레임워크 95 출시.",
+      "description": "관련 문서: 인터넷",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-11"
+    },
+    {
+      "id": "wiki-event-12",
+      "year": 1997,
+      "month": null,
+      "day": null,
+      "title": "Ludus LEAP 그래픽 처리장치 출시.",
+      "description": "관련 문서: Ludus",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-12"
+    },
+    {
+      "id": "ea080471-d90a-4f43-8784-eb56e43ceadd",
+      "year": 1999,
+      "month": 12,
+      "day": 31,
+      "title": "아이리스 갤러웨이의 암살",
+      "description": "대선 하루 반나절을 앞두고서 유력 후보였던 아이리스 갤러웨이가 암살 됨.",
+      "color": "red",
+      "date_label": "",
+      "source_url": ""
+    },
+    {
+      "id": "e05cef00-0c54-4982-a9a9-0fc3b666215c",
+      "year": 2000,
+      "month": 1,
+      "day": 15,
+      "title": "테러와의 전쟁",
+      "description": "로어노크 연방 대통령 코델리아 워드가 테러와의 전쟁 선포",
+      "color": "red",
+      "date_label": "",
+      "source_url": ""
+    },
+    {
+      "id": "353419d7-200f-4596-9c69-2cf94b84dc0b",
+      "year": 2000,
+      "month": 2,
+      "day": null,
+      "title": "브리아나 레인의 첫 파병",
+      "description": "브리아나 레인이 육군 101 강습 사단 복무중 아라쿨로 파병된다.",
+      "color": "red",
+      "date_label": "",
+      "source_url": ""
+    },
+    {
+      "id": "82d8bace-d7b2-4b54-a408-ade967d861d4",
+      "year": 2001,
+      "month": 7,
+      "day": null,
+      "title": "벤자민 머레이의 사망",
+      "description": "NSPD 경관 벤자민 머레이가 전 육군 에로우헤드 대원이었던 마비스 머레이에 의해 살해됨",
+      "color": "red",
+      "date_label": "",
+      "source_url": ""
+    },
+    {
+      "id": "83c9ca2d-b00c-4469-beac-f457b9aef8d8",
+      "year": 2003,
+      "month": 3,
+      "day": null,
+      "title": "메이블 반즈의 첫 파병",
+      "description": "메이블 반즈가 해병대 훈련을 마치고 처음으로 해외로 파병됐다",
+      "color": "red",
+      "date_label": "",
+      "source_url": ""
+    },
+    {
+      "id": "wiki-event-13",
+      "year": 2006,
+      "month": null,
+      "day": null,
+      "title": "알파벳 레터박스 출시.",
+      "description": "관련 문서: 알파벳",
+      "color": "red",
+      "date_label": "",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-13"
+    },
+    {
+      "id": "wiki-event-14",
+      "year": 2010,
+      "month": null,
+      "day": null,
+      "title": "태원이 로어노크의 주요 도전자로 부상한다.",
+      "description": "관련 문서: 태원",
+      "color": "red",
+      "date_label": "2010 이후",
+      "source_url": "https://insignia-wiki.mastercable-cloud.site/timeline/#timeline-event-14"
+    },
+    {
+      "id": "timeline-sample",
+      "year": 2140,
+      "month": 3,
+      "day": null,
+      "title": "[샘플] 새로운 도시의 시작",
+      "description": "샘플 노드입니다. 실제 연표와 구분하기 위한 예시 하나만 남겼습니다.\n\n이주민들이 북쪽 해안에 도착한다. 작은 정착촌이 도시의 기틀이 된다.",
+      "color": "gray",
+      "date_label": "",
+      "source_url": ""
+    }
+  ]
+}

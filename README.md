@@ -111,10 +111,20 @@ wiki authentication gateway described below. Static builds exclude the editor.
 - **전체 보기** / `F`, **사건 추가** / `N`, 확대 `+`, 축소 `-` 단축키를 지원합니다.
   캔버스에 포커스가 있을 때 방향키로 이동할 수 있습니다. 사건을 누르면 오른쪽
   패널에서 수정·삭제할 수 있고, 저장하면 바뀐 날짜로 이동합니다.
-- 저장소는 `INSIGNIA_DATA_ROOT`(기본: 프로젝트 폴더)의 `.private/timeline.sqlite3`입니다.
-  브라우저를 바꾸거나 서버를 재시작해도 유지됩니다. 이 디렉터리를 백업에 포함하세요.
-  Git·Docker 빌드 컨텍스트·공개 `dist/`·검색에는 데이터가 포함되지 않습니다.
-  다른 창이 먼저 저장하면 덮어쓰기를 막고 새로 불러오도록 안내합니다.
+- 데이터 원본은 `INSIGNIA_DATA_ROOT`(기본: 프로젝트 폴더)의
+  `timeline-data/timeline.json`입니다. 사건을 저장하면 날짜순으로 정돈된 UTF-8 JSON을
+  원자적으로 갱신하므로 Git에서 내용 변경을 비교·커밋·복원할 수 있습니다.
+  새로 체크아웃한 저장소에서도 이 파일을 바로 읽습니다. 파일에는 제목과 모든 사건의
+  날짜·시점 표기·설명·색상·출처 링크가 포함되며, 저장 횟수나 시각은 기록하지 않습니다.
+  Git 복원이나 직접 파일 수정도 내용 기반 버전으로 감지해 오래된 창의 덮어쓰기를 막습니다.
+- 기존 `.private/timeline.sqlite3`만 있는 경우 첫 조회에서 JSON으로 한 번 이전합니다.
+  SQLite 파일은 백업으로 남겨 두며 JSON이 생긴 뒤에는 읽거나 갱신하지 않습니다.
+  `.private/`의 잠금 파일·기존 DB·백업은 계속 Git에서 제외됩니다.
+  변경을 기록하려면 `git add timeline-data/timeline.json` 후 커밋하세요. 저장 자체가
+  Git 커밋이나 push를 실행하지는 않습니다. 공개 저장소에 push하면 연표 데이터도 공개됩니다.
+- `timeline-data/`는 공개 `dist/`·검색·Docker 빌드 컨텍스트에 포함되지 않습니다.
+  기존 Compose 구성처럼 체크아웃 전체를 `/workspace`에 마운트하면 백엔드가 해당
+  JSON을 읽고 저장합니다. 웹사이트에서는 계속 로그인한 사용자의 편집 API로만 조회합니다.
 - HTML은 `/editor/timeline/`, API는 `/__editor/api/timeline`과
   `/__editor/api/timeline/save`를 사용합니다. 기존 `/editor/`와 같은 로그인 게이트웨이
   보호를 받습니다. 운영 모드에서는 조회·저장 모두 인증 프록시 토큰이 필요하고,

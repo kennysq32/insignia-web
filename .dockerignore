@@ -1,6 +1,7 @@
 .git
 .cache
 .private
+timeline-data
 dist
 .dist-*
 __pycache__

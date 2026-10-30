@@ -9,6 +9,7 @@ tools/
 .obsidian/
 .cache/
 .private/
+/timeline-data/.editor-*.tmp
 
 .venv/
 .env

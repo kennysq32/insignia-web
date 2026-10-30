@@ -1,16 +1,18 @@
-"""Private world-building timeline, persisted separately from public content."""
+"""Git-tracked chronology data, served only through the authenticated editor."""
 
 from __future__ import annotations
 
 import calendar
 from contextlib import contextmanager
 from datetime import datetime, timezone
+import hashlib
 import json
+import os
 import re
 import sqlite3
 from urllib.parse import urlsplit
 
-from editor import APIError
+from editor import APIError, EditorAPI
 
 
 class TimelineAPI:
@@ -20,31 +22,106 @@ class TimelineAPI:
         self.site = site
 
     @contextmanager
-    def database(self):
+    def locked(self):
+        """Serialize JSON reads/migrations/writes across server threads and processes."""
         folder = self.site.ROOT / ".private"
         folder.mkdir(mode=0o700, parents=True, exist_ok=True)
-        db = sqlite3.connect(folder / "timeline.sqlite3", timeout=10)
+        with self.site.SITE_LOCK, (folder / "timeline.lock").open("a+b") as stream:
+            if os.name == "nt":
+                import msvcrt
+                stream.seek(0)
+                if not stream.read(1):
+                    stream.write(b"\0")
+                    stream.flush()
+                stream.seek(0)
+                msvcrt.locking(stream.fileno(), msvcrt.LK_LOCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(stream.fileno(), fcntl.LOCK_EX)
+            try:
+                yield
+            finally:
+                if os.name == "nt":
+                    stream.seek(0)
+                    msvcrt.locking(stream.fileno(), msvcrt.LK_UNLCK, 1)
+                else:
+                    fcntl.flock(stream.fileno(), fcntl.LOCK_UN)
+
+    @property
+    def source(self):
+        path = self.site.ROOT / "timeline-data" / "timeline.json"
+        if path.parent.is_symlink() or path.is_symlink():
+            raise APIError(500, "타임라인 데이터는 저장소 안의 실제 JSON 파일이어야 합니다.")
+        return path
+
+    @property
+    def migrated(self):
+        return self.site.ROOT / ".private" / "timeline-json-migrated"
+
+    def stored_value(self, value):
+        if not isinstance(value, dict):
+            raise APIError(500, "타임라인 JSON의 형식을 확인해 주세요.")
         try:
-            db.execute("""CREATE TABLE IF NOT EXISTS timeline (
-                id INTEGER PRIMARY KEY CHECK (id = 1),
-                version INTEGER NOT NULL,
-                data TEXT NOT NULL,
-                updated_at TEXT NOT NULL
-            )""")
-            yield db
-        finally:
-            db.close()
+            return self.validate({**value, "version": 0})
+        except APIError as error:
+            raise APIError(500, f"타임라인 JSON을 확인해 주세요: {error}") from None
+
+    def record(self, value, raw):
+        # A content revision also detects Git checkouts and hand edits. It does
+        # not depend on a local database counter, file timestamps, or a branch.
+        return {**value, "version": hashlib.sha256(raw).hexdigest(),
+                "updated_at": datetime.fromtimestamp(self.source.stat().st_mtime, timezone.utc).isoformat(timespec="seconds")}
+
+    def write_source(self, value):
+        raw = (json.dumps({"schema_version": 1, **value}, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+        self.source.parent.mkdir(parents=True, exist_ok=True)
+        EditorAPI.atomic_write(self.source, raw)
+        if not self.migrated.exists():
+            self.migrated.touch()
+        return self.record(value, raw)
+
+    def migrate_legacy(self):
+        """Copy the former SQLite store once; leave the original as a backup."""
+        legacy = self.site.ROOT / ".private" / "timeline.sqlite3"
+        if not legacy.is_file():
+            return
+        try:
+            db = sqlite3.connect(legacy.resolve().as_uri() + "?mode=ro", uri=True)
+            try:
+                row = db.execute("SELECT data FROM timeline WHERE id = 1").fetchone()
+            finally:
+                db.close()
+            if row:
+                self.write_source(self.stored_value(json.loads(row[0])))
+        except (sqlite3.Error, ValueError, UnicodeDecodeError):
+            raise APIError(500, "기존 SQLite 타임라인을 읽을 수 없습니다. 원본 파일을 확인해 주세요.") from None
+
+    def read_document(self):
+        if not self.source.exists():
+            if self.migrated.exists():
+                raise APIError(500, "타임라인 JSON이 없어졌습니다. Git이나 백업에서 복원해 주세요. 이전 SQLite 데이터로 덮어쓰지 않습니다.")
+            self.migrate_legacy()
+        if not self.source.exists():
+            return {"version": 0, "title": "세계관 타임라인", "events": [], "updated_at": None}
+        raw = self.source.read_bytes()
+        try:
+            value = json.loads(raw)
+        except (ValueError, UnicodeDecodeError):
+            raise APIError(500, "타임라인 JSON을 읽을 수 없습니다. 파일 형식이나 Git 충돌 표시를 확인해 주세요.") from None
+        if not isinstance(value, dict) or type(value.get("schema_version")) is not int or value["schema_version"] != 1:
+            raise APIError(500, "지원하는 타임라인 JSON 형식(schema_version: 1)을 사용해 주세요.")
+        value = self.stored_value(value)
+        if not self.migrated.exists():
+            self.migrated.touch()
+        return self.record(value, raw)
 
     @staticmethod
     def sort_events(events):
         return sorted(events, key=lambda e: (e["year"], e["month"] or 0, e["day"] or 0, e["id"]))
 
     def document(self):
-        with self.database() as db:
-            row = db.execute("SELECT version, data, updated_at FROM timeline WHERE id = 1").fetchone()
-        if row is None:
-            return {"version": 0, "title": "세계관 타임라인", "events": [], "updated_at": None}
-        return {**json.loads(row[1]), "version": row[0], "updated_at": row[2]}
+        with self.locked():
+            return self.read_document()
 
     @staticmethod
     def text(data, key, limit, required=False):
@@ -54,7 +131,9 @@ class TimelineAPI:
         return value.strip()
 
     def validate(self, payload):
-        if type(payload.get("version")) is not int or payload["version"] < 0:
+        version = payload.get("version")
+        if not ((type(version) is int and version >= 0)
+                or (isinstance(version, str) and re.fullmatch(r"[0-9a-f]{64}", version))):
             raise APIError(400, "타임라인 버전을 확인해 주세요.")
         title = self.text(payload, "title", 120, required=True)
         rows = payload.get("events")
@@ -98,20 +177,14 @@ class TimelineAPI:
 
     def save(self, payload):
         value = self.validate(payload)
-        now = datetime.now(timezone.utc).isoformat(timespec="seconds")
-        with self.database() as db:
-            with db:
-                db.execute("BEGIN IMMEDIATE")
-                row = db.execute("SELECT version FROM timeline WHERE id = 1").fetchone()
-                version = row[0] if row else 0
-                if version != payload["version"]:
-                    raise APIError(409, "다른 창에서 타임라인이 변경되었습니다. 입력 내용을 복사한 뒤 최신 타임라인을 불러와 주세요.")
-                version += 1
-                db.execute("""INSERT INTO timeline (id, version, data, updated_at) VALUES (1, ?, ?, ?)
-                    ON CONFLICT(id) DO UPDATE SET version=excluded.version,
-                    data=excluded.data, updated_at=excluded.updated_at""",
-                           (version, json.dumps(value, ensure_ascii=False), now))
-        return {**value, "version": version, "updated_at": now}
+        try:
+            with self.locked():
+                current = self.read_document()
+                if current["version"] != payload["version"]:
+                    raise APIError(409, "다른 창이나 Git에서 타임라인이 변경되었습니다. 입력 내용을 복사한 뒤 최신 타임라인을 불러와 주세요.")
+                return self.write_source(value)
+        except OSError:
+            raise APIError(500, "타임라인 JSON을 저장하지 못했습니다. 파일 권한과 디스크 공간을 확인한 뒤 다시 시도해 주세요.") from None
 
     def handle(self, method, path, payload):
         if method == "GET" and path == "/__editor/api/timeline":
